@@ -1,0 +1,26 @@
+order_id,customer_id,order_date,order_value,discount_used,discount_amount,is_subscription,product_id,product_name,category,price,quantity,line_total
+ORD001,cust_001,2024-08-01,149.99,true,15.00,false,prod_001,Premium Coffee Beans,Beverages,49.99,2,99.98
+ORD001,cust_001,2024-08-01,149.99,true,15.00,false,prod_002,Organic Tea Collection,Beverages,25.00,2,50.01
+ORD002,cust_002,2024-08-05,189.00,false,0,false,prod_003,Artisan Chocolate Box,Beverages,189.00,1,189.00
+ORD003,cust_001,2024-09-02,107.00,false,0,false,prod_001,Premium Coffee Beans,Beverages,49.99,2,99.98
+ORD003,cust_001,2024-09-02,107.00,false,0,false,prod_004,Handcrafted Mug,Equipment,22.00,1,22.00
+ORD004,cust_003,2024-08-10,157.00,true,20.00,false,prod_005,French Press,Equipment,157.00,1,157.00
+ORD005,cust_002,2024-09-15,394.00,false,0,false,prod_003,Artisan Chocolate Box,Beverages,189.00,1,189.00
+ORD005,cust_002,2024-09-15,394.00,false,0,false,prod_006,Pour Over Kit,Equipment,197.00,1,197.00
+ORD006,cust_004,2024-08-20,51.00,true,5.00,false,prod_002,Organic Tea Collection,Beverages,25.50,2,51.00
+ORD007,cust_005,2024-08-25,103.00,false,0,false,prod_004,Handcrafted Mug,Equipment,103.00,1,103.00
+ORD008,cust_001,2024-10-01,74.97,false,0,false,prod_001,Premium Coffee Beans,Beverages,49.99,1,49.99
+ORD008,cust_001,2024-10-01,74.97,false,0,false,prod_002,Organic Tea Collection,Beverages,24.98,1,24.98
+ORD009,cust_003,2024-09-22,157.00,false,0,false,prod_005,French Press,Equipment,157.00,1,157.00
+ORD010,cust_006,2024-08-12,197.00,true,25.00,false,prod_006,Pour Over Kit,Equipment,197.00,1,197.00
+ORD011,cust_007,2024-08-30,49.99,false,0,false,prod_001,Premium Coffee Beans,Beverages,49.99,1,49.99
+ORD012,cust_002,2024-10-20,378.00,true,20.00,false,prod_003,Artisan Chocolate Box,Beverages,189.00,2,378.00
+ORD013,cust_008,2024-09-05,51.00,true,10.00,false,prod_002,Organic Tea Collection,Beverages,25.50,2,51.00
+ORD014,cust_004,2024-09-28,76.50,false,0,false,prod_002,Organic Tea Collection,Beverages,25.50,3,76.50
+ORD015,cust_009,2024-08-18,309.00,false,0,false,prod_003,Artisan Chocolate Box,Beverages,189.00,1,189.00
+ORD015,cust_009,2024-08-18,309.00,false,0,false,prod_005,French Press,Equipment,120.00,1,120.00
+ORD016,cust_010,2024-10-15,49.99,false,0,false,prod_001,Premium Coffee Beans,Beverages,49.99,1,49.99
+ORD017,cust_001,2024-11-05,99.97,false,0,false,prod_001,Premium Coffee Beans,Beverages,49.99,2,99.98
+ORD018,cust_002,2024-11-10,189.00,false,0,false,prod_003,Artisan Chocolate Box,Beverages,189.00,1,189.00
+ORD019,cust_011,2024-09-01,206.00,true,15.00,false,prod_004,Handcrafted Mug,Equipment,103.00,2,206.00
+ORD020,cust_003,2024-11-01,314.00,false,0,false,prod_005,French Press,Equipment,157.00,2,314.00

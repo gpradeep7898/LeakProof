@@ -1,0 +1,41 @@
+{
+  "name": "leakproof",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "db:migrate": "node scripts/migrate.js",
+    "db:seed": "node scripts/seed.js",
+    "db:check": "node scripts/check-db.js"
+  },
+  "dependencies": {
+    "@types/papaparse": "^5.5.2",
+    "csv-parse": "^5.5.6",
+    "dotenv": "^17.3.1",
+    "framer-motion": "^12.34.0",
+    "lucide-react": "^0.460.0",
+    "nanoid": "^5.0.9",
+    "next": "14.2.18",
+    "papaparse": "^5.5.3",
+    "pg": "^8.13.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-hot-toast": "^2.6.0",
+    "stripe": "^17.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "@types/pg": "^8.16.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "14.2.18",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.14",
+    "typescript": "^5.6.3"
+  }
+}
