@@ -1,0 +1,59 @@
+Name,Value,Value Type,Type,Discount Class,Minimum Purchase Requirements,Combines with Order Discounts,Combines with Product Discounts,Combines with Shipping Discounts,Customer Selection,Context,Times Used In Total,Applies Once Per Customer,Usage Limit Per Code,Status,Start,End
+STAYSAFE,-6.99,fixed_amount,Amount Off,product,,,,,all,all,25,1,,Expired,2020-04-19 21:33:11 -0400,2020-05-22 08:05:51 -0400
+LULUS,-2.99,fixed_amount,Amount Off,order,,,,,all,all,1,,,Expired,2020-04-25 16:28:34 -0400,2020-04-27 12:03:02 -0400
+SAVE10,-10.0,percentage,Amount Off,order,,,,,all,all,61,1,,Expired,2020-04-26 14:30:29 -0400,2022-06-19 12:09:29 -0400
+FO1100,-7.98,fixed_amount,Amount Off,order,,,,,all,all,1,,,Expired,2020-04-30 00:23:51 -0400,2020-05-02 11:53:03 -0400
+PATCH10,-10.0,percentage,Amount Off,order,,,,,all,all,153,1,,Expired,2020-05-02 11:46:33 -0400,2020-06-14 20:39:57 -0400
+SHASH,-50.0,percentage,Amount Off,order,,,,,all,all,1,,1,Expired,2020-05-06 18:18:11 -0400,2020-05-23 01:00:24 -0400
+PATMA10,-10.0,percentage,Amount Off,order,,,,,all,all,6,1,,Expired,2020-05-07 00:21:15 -0400,2020-05-23 00:59:40 -0400
+PATCT10,-10.0,percentage,Amount Off,order,,,,,all,all,7,1,,Expired,2020-05-07 00:39:35 -0400,2020-05-23 00:59:41 -0400
+PATFL10,-10.0,percentage,Amount Off,order,,,,,all,all,0,1,,Expired,2020-05-07 23:29:15 -0400,2020-05-23 00:59:40 -0400
+PATOH10,-10.0,percentage,Amount Off,order,,,,,all,all,0,1,,Expired,2020-05-07 23:41:00 -0400,2020-05-23 00:59:40 -0400
+PATMI10,-10.0,percentage,Amount Off,order,,,,,all,all,3,1,,Expired,2020-05-07 23:52:04 -0400,2020-05-23 00:59:40 -0400
+PATIL10,-10.0,percentage,Amount Off,order,,,,,all,all,2,1,,Expired,2020-05-08 00:08:13 -0400,2020-05-23 01:00:07 -0400
+SAL1233,-1.6,fixed_amount,Amount Off,order,,,,,all,all,0,,1,Expired,2020-05-09 19:19:31 -0400,2020-07-08 20:37:16 -0400
+FREESOFTSOAP,-2.49,fixed_amount,Amount Off,product,,,,,all,all,0,1,,Expired,2020-05-15 13:02:28 -0400,2020-05-23 00:59:56 -0400
+SAVE5,-5.0,percentage,Amount Off,order,,,,,all,all,2217,1,,Active,2020-05-16 14:59:53 -0400,
+BUY,-5.0,percentage,Amount Off,order,,,,,all,all,1487,1,,Active,2020-06-03 22:03:08 -0400,
+VARU,-10.0,percentage,Amount Off,order,,,,,all,all,0,1,,Active,2020-06-15 19:25:39 -0400,
+JULY4TH,-10.0,fixed_amount,Amount Off,order,100.0,,,,all,all,8,1,,Expired,2020-06-30 00:09:21 -0400,2021-07-02 23:59:59 -0400
+VOLHS,-10.0,percentage,Amount Off,product,5,,,,all,all,2,,,Expired,2020-07-09 01:23:16 -0400,2020-10-21 22:04:40 -0400
+VOLGL,-10.0,percentage,Amount Off,product,5,,,,all,all,0,,,Expired,2020-07-09 01:24:21 -0400,2020-10-21 22:04:26 -0400
+VOLGM,-10.0,percentage,Amount Off,product,5,,,,all,all,0,,,Expired,2020-07-09 01:24:54 -0400,2020-10-21 22:04:16 -0400
+VOLSW,-10.0,percentage,Amount Off,product,5,,,,all,all,1,,,Expired,2020-07-09 01:25:41 -0400,2020-10-21 22:04:08 -0400
+VOLVF,-10.0,percentage,Amount Off,product,5,,,,all,all,0,,,Expired,2020-07-09 01:26:30 -0400,2020-10-21 22:04:00 -0400
+VOLD3,-10.0,percentage,Amount Off,product,5,,,,all,all,0,,,Expired,2020-07-09 01:27:18 -0400,2020-10-21 22:03:49 -0400
+VOLCM,-10.0,percentage,Amount Off,product,5,,,,all,all,0,,,Expired,2020-07-09 01:27:53 -0400,2020-10-21 22:03:38 -0400
+VOLCW,-10.0,percentage,Amount Off,product,5,,,,all,all,0,,,Expired,2020-07-09 01:28:20 -0400,2020-10-21 22:03:26 -0400
+JANIE,-100.0,percentage,Free Shipping,shipping,,,,,all,all,1,,,Expired,2020-07-09 11:16:19 -0400,2020-07-09 11:22:22 -0400
+MATT,-6.99,fixed_amount,Amount Off,order,,,,,all,all,0,,1,Expired,2020-07-14 10:20:40 -0400,2020-10-21 22:02:34 -0400
+FALL2025,-5.0,percentage,Amount Off,order,,,,,all,all,33,1,,Expired,2025-11-01 10:31:00 -0400,2025-11-04 23:59:59 -0500
+DONNA,-3.99,fixed_amount,Amount Off,order,,,,,all,all,0,,1,Expired,2020-07-17 10:53:03 -0400,2020-10-21 22:02:10 -0400
+SUMMER,-10.0,fixed_amount,Amount Off,order,100.0,,,,all,all,33,1,,Expired,2020-07-17 11:35:50 -0400,2020-10-04 15:25:52 -0400
+GLENDA,-4.5,fixed_amount,Amount Off,order,,,,,all,all,0,,1,Expired,2020-07-22 21:16:49 -0400,2021-05-04 00:56:34 -0400
+EASY5,-5.0,percentage,Amount Off,order,,,,,all,all,21,1,,Expired,2025-08-22 15:10:46 -0400,2025-08-25 23:59:59 -0400
+KEITH,-100.0,percentage,Free Shipping,shipping,,,,,all,all,1,,1,Expired,2020-08-09 13:33:33 -0400,2020-08-30 16:14:45 -0400
+REPEAT,-5.0,percentage,Amount Off,order,,,,,all,all,430,1,,Active,2020-08-24 17:36:07 -0400,
+PURELL,-100.0,percentage,Buy X Get Y,product,,,,,all,all,0,,,Expired,2020-08-28 23:59:44 -0400,2020-08-29 00:05:17 -0400
+LABORDAY,-3.0,fixed_amount,Amount Off,product,,,,,all,all,10,1,,Expired,2020-09-05 09:40:28 -0400,2020-10-21 22:01:30 -0400
+CHASE3897,-4.97,fixed_amount,Amount Off,order,,,,,all,all,0,,1,Expired,2020-09-05 12:52:10 -0400,2022-06-19 12:11:37 -0400
+CHASE,-4.97,fixed_amount,Amount Off,order,,,,,all,all,0,1,,Expired,2020-09-23 17:27:28 -0400,2022-06-19 12:10:31 -0400
+THANKS,-5.0,percentage,Amount Off,order,,,,,all,all,100,1,,Expired,2025-11-14 17:00:37 -0500,2025-11-28 23:59:59 -0500
+THANKYOU,-1.0,percentage,Amount Off,order,,,,,all,all,349,1,,Active,2020-10-24 00:14:05 -0400,
+LUCKY10,-5.0,percentage,Amount Off,order,,,,,all,all,26,1,,Expired,2020-10-27 22:57:24 -0400,2025-08-31 23:59:59 -0400
+SHOPLOCALNJ,-5.0,percentage,Amount Off,order,,,,,all,all,0,1,,Expired,2020-11-21 11:52:38 -0500,2021-12-30 10:13:30 -0500
+SANJAY,-3.0,fixed_amount,Amount Off,order,,,,,all,all,1,,1,Expired,2020-11-27 17:23:38 -0500,2022-06-19 12:11:18 -0400
+SAVE2,-2.0,percentage,Amount Off,order,,,,,all,all,17,1,,Active,2020-12-17 23:53:56 -0500,
+MAY2021,-10.0,percentage,Amount Off,order,,,,,all,all,11,1,,Expired,2021-05-01 14:02:04 -0400,2021-05-04 00:56:47 -0400
+MEMORIALDAY,-5.0,fixed_amount,Amount Off,order,100.0,,,,all,all,21,1,,Expired,2021-05-29 14:48:02 -0400,2025-12-11 23:59:59 -0500
+BLACKFRIDAY,-10.0,percentage,Amount Off,order,,,,,all,all,22,1,,Expired,2025-11-26 00:00:00 -0500,2025-11-30 23:59:59 -0500
+THANKSGIVING,-10.0,percentage,Amount Off,order,,,,,all,all,47,1,,Expired,2024-11-27 01:00:00 -0500,2024-11-29 23:59:59 -0500
+CYBERMONDAY,-12.0,percentage,Amount Off,order,,,,,all,all,33,1,,Expired,2025-11-30 16:00:00 -0500,2025-12-07 23:59:59 -0500
+HOLIDAYS,-5.0,percentage,Amount Off,order,,,,,all,all,86,1,,Expired,2023-12-02 13:51:21 -0500,2024-01-08 23:59:59 -0500
+HAPPYHOLIDAYS,-10.0,percentage,Amount Off,order,,,,,all,all,21,,,Expired,2023-12-26 22:37:37 -0500,2023-12-26 23:59:59 -0500
+EASTERWEEKEND,-5.0,percentage,Amount Off,order,,,,,all,all,20,1,,Expired,2024-03-30 14:25:58 -0400,2025-04-10 23:59:59 -0400
+JULY4,-10.0,fixed_amount,Amount Off,order,100.0,1,,,all,all,3,1,,Expired,2024-06-21 14:30:35 -0400,2024-07-01 23:59:59 -0400
+INDEPENDENCEDAY,-5.0,percentage,Amount Off,order,100.0,1,,,all,all,3,1,,Expired,2024-06-27 00:00:18 -0400,2024-07-01 23:59:59 -0400
+Merry Christmas Chocolate Festival – 10% Off,-10.0,percentage,Amount Off,product,,,,,all,all,322,,,Expired,2025-12-17 18:00:00 -0500,2025-12-28 23:59:59 -0500
+Wellness Essentials Sale – 5% Off,-5.0,percentage,Amount Off,product,,,,,all,all,89,,,Expired,2025-12-17 18:00:00 -0500,2025-12-28 23:59:59 -0500
+Syessa Select Savings – 5% Off,-5.0,percentage,Amount Off,product,,,,,all,all,110,,,Active,2026-01-19 16:30:00 -0500,2026-02-20 23:59:59 -0500

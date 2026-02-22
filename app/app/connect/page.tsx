@@ -135,7 +135,11 @@ export default function DataConnect() {
       formData.append('file', file)
       const res = await fetch('/api/csv/upload', { method: 'POST', body: formData })
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Upload failed')
+      if (!res.ok) {
+        const details = data.details as string[] | undefined
+        const msg = details?.length ? `${data.error || 'Upload failed'}: ${details.slice(0, 3).join('; ')}` : (data.error || 'Upload failed')
+        throw new Error(msg)
+      }
       setResult(data)
       setStep('verify')
       toast.success('Data imported successfully!')

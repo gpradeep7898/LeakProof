@@ -5,7 +5,7 @@ function norm(col: string): string {
 }
 
 export const COLUMN_ALIASES: Record<string, string[]> = {
-  order_id: ['order_id', 'orderid', 'order', 'Order ID'],
+  order_id: ['order_id', 'orderid', 'order', 'Order ID', 'Id'],
   customer_id: ['customer_id', 'customerid', 'email', 'customer_email', 'Email'],
   order_date: ['order_date', 'orderdate', 'date', 'created_at', 'Date'],
   order_value: ['order_value', 'ordervalue', 'total', 'total_price', 'totalprice', 'subtotal'],

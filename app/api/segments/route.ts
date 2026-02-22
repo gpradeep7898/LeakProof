@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
+
+export const dynamic = 'force-dynamic'
 import { query } from '@/lib/db'
 import { getDefaultStoreId } from '@/lib/store'
 
@@ -33,8 +35,8 @@ export async function GET(request: NextRequest) {
       const members = await query<{ customer_id: string; total_orders: string; total_spend: string; last_order_date: string }>(
         `SELECT c.customer_id, c.total_orders, c.total_spend, c.last_order_date
          FROM customers c
-         JOIN segment_members sm ON sm.customer_id = c.customer_id AND sm.store_id = c.store_id
-         JOIN customer_segments cs ON cs.segment_id = sm.segment_id
+         JOIN segment_members sm ON sm.customer_id = c.customer_id
+         JOIN customer_segments cs ON cs.segment_id = sm.segment_id AND cs.store_id = c.store_id
          WHERE cs.store_id = $1 AND cs.segment_name = $2
          LIMIT 50`,
         [storeId, segmentFilter]

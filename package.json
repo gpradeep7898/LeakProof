@@ -8,15 +8,22 @@
     "start": "next start",
     "lint": "next lint",
     "db:migrate": "node scripts/migrate.js",
+    "db:migrate:full": "node scripts/migrate_leakproof_full.js",
     "db:seed": "node scripts/seed.js",
     "db:check": "node scripts/check-db.js"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.90.21",
     "@types/papaparse": "^5.5.2",
-    "csv-parse": "^5.5.6",
+    "bullmq": "^5.69.1",
+    "clsx": "^2.1.1",
+    "csv-parse": "^5.6.0",
     "dotenv": "^17.3.1",
     "framer-motion": "^12.34.0",
+    "ioredis": "^5.9.3",
+    "json2csv": "^6.0.0-alpha.2",
     "lucide-react": "^0.460.0",
+    "multer": "^2.0.2",
     "nanoid": "^5.0.9",
     "next": "14.2.18",
     "papaparse": "^5.5.3",
@@ -24,7 +31,10 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hot-toast": "^2.6.0",
-    "stripe": "^17.4.0"
+    "recharts": "^3.7.0",
+    "stripe": "^17.4.0",
+    "tailwind-merge": "^3.4.0",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.1",

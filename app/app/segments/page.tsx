@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { toast } from 'react-hot-toast'
 
 type Segment = {
   id: string
@@ -30,8 +31,14 @@ export default function CustomerSegments() {
     VIP: '👑',
     Loyal: '❤️',
     'At Risk': '⚠️',
+    'At-risk': '⚠️',
     New: '✨',
     Churned: '❌',
+    Repeat: '🔄',
+    'One-time': '🆕',
+    Lapsed: '😴',
+    'Discount-Immune': '💰',
+    'Discount-Dependent': '🏷️',
   }
 
   if (loading) return <div className="animate-pulse h-64 bg-gray-200 rounded-xl" />
@@ -60,7 +67,7 @@ export default function CustomerSegments() {
             ))}
           </div>
 
-          <div className="flex gap-2 mb-4">
+          <div className="flex flex-wrap items-center gap-2 mb-4">
             <button
               onClick={() => setFilter('all')}
               className={`px-4 py-2 rounded-lg text-sm font-medium ${filter === 'all' ? 'bg-teal text-white' : 'bg-gray-100 text-gray-700'}`}
@@ -76,6 +83,29 @@ export default function CustomerSegments() {
                 {s.name}
               </button>
             ))}
+            {filter !== 'all' && (
+              <button
+                onClick={async () => {
+                  try {
+                    const r = await fetch(`/api/segments/export?segment=${encodeURIComponent(filter)}`)
+                    const j = await r.json()
+                    if (!r.ok) throw new Error(j.error || 'Failed')
+                    const blob = new Blob([j.customerIds.join('\n')], { type: 'text/plain' })
+                    const a = document.createElement('a')
+                    a.href = URL.createObjectURL(blob)
+                    a.download = `segment-${filter}-customer-ids.txt`
+                    a.click()
+                    URL.revokeObjectURL(a.href)
+                    toast.success(`Exported ${j.count} anonymized customer IDs`)
+                  } catch {
+                    toast.error('Export failed')
+                  }
+                }}
+                className="ml-auto px-4 py-2 rounded-lg text-sm font-medium border border-teal text-teal hover:bg-teal/5"
+              >
+                Export Segment
+              </button>
+            )}
           </div>
 
           <div className="bg-white rounded-xl border overflow-hidden">
@@ -101,7 +131,7 @@ export default function CustomerSegments() {
                 ) : (
                   customers.map((c: { customerId: string; orders?: number; totalSpent?: number; lastOrder?: string }) => (
                     <tr key={c.customerId} className="border-t">
-                      <td className="p-3 font-mono text-gray-700">{c.customerId}</td>
+                      <td className="p-3 font-mono text-gray-700">Customer #{c.customerId}</td>
                       <td className="p-3">{filter}</td>
                       <td className="p-3">{c.orders ?? '—'}</td>
                       <td className="p-3">${c.totalSpent != null ? Math.round(c.totalSpent).toLocaleString() : '—'}</td>
