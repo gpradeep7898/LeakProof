@@ -1,23 +1,24 @@
 import type { Metadata } from 'next'
-import { Providers } from '@/app/components/Providers'
+import ShopifyProvider from '@/app/components/ShopifyProvider'
+import { ToasterProvider } from '@/app/components/ToasterProvider'
+import { QueryProvider } from '@/app/components/Providers'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'LeakProof - Find Revenue Leaks Before They Sink You',
-  description: 'LeakProof turns your Shopify data into plain-English answers about your biggest revenue opportunities.',
+  title: 'LeakProof — Profit Analytics for Shopify',
+  description: 'Find where money leaks from your Shopify store and fix it in minutes.',
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <Providers>
-          {children}
-        </Providers>
+        <ShopifyProvider>
+          <QueryProvider>
+            {children}
+            <ToasterProvider />
+          </QueryProvider>
+        </ShopifyProvider>
       </body>
     </html>
   )

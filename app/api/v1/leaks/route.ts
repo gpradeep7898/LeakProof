@@ -6,11 +6,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { query, queryOne } from '@/lib/db'
 import { LeakDetector } from '@/lib/services/leakDetector'
-import { getDefaultStoreId } from '@/lib/store'
+import { getStoreFromRequest } from '@/lib/store'
 
 export async function GET(req: NextRequest) {
     try {
-        const storeId = await getDefaultStoreId()
+        const storeId = await getStoreFromRequest(req)
         const { searchParams } = req.nextUrl
         const limit = parseInt(searchParams.get('limit') || '50')
         const severity = searchParams.get('severity')
@@ -26,12 +26,10 @@ export async function GET(req: NextRequest) {
         confidence_score,
         affected_customers_count,
         affected_orders_count,
-        data_quality,
         status,
         priority_rank,
         recommended_action_json,
-        expected_outcome,
-        detected_at
+        created_at AS detected_at
       FROM revenue_leaks
       WHERE store_id = $1
     `
@@ -49,8 +47,8 @@ export async function GET(req: NextRequest) {
             id: string; leak_type: string; title: string; description: string
             severity: string; estimated_monthly_loss: string; confidence_score: string
             affected_customers_count: string; affected_orders_count: string
-            data_quality: string; status: string; priority_rank: string
-            recommended_action_json: Record<string, unknown>; expected_outcome: string; detected_at: string
+            status: string; priority_rank: string
+            recommended_action_json: Record<string, unknown>; detected_at: string
         }>(sql, params)
 
         const totalAtRisk = leaks.reduce((s, l) => s + parseFloat(l.estimated_monthly_loss || '0'), 0)
@@ -66,11 +64,9 @@ export async function GET(req: NextRequest) {
                 confidenceScore: parseFloat(l.confidence_score || '0'),
                 affectedCustomersCount: parseInt(l.affected_customers_count || '0'),
                 affectedOrdersCount: parseInt(l.affected_orders_count || '0'),
-                dataQuality: l.data_quality || 'medium',
                 status: l.status,
                 priorityRank: parseInt(l.priority_rank || '0'),
                 recommendedAction: l.recommended_action_json || {},
-                expectedOutcome: l.expected_outcome || '',
                 detectedAt: l.detected_at,
             })),
             totalLeaks: leaks.length,
@@ -85,7 +81,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
     try {
-        const storeId = await getDefaultStoreId()
+        const storeId = await getStoreFromRequest(req)
         const detector = new LeakDetector(storeId)
         const leaks = await detector.detectAllLeaks()
         const totalAtRisk = leaks.reduce((s, l) => s + l.estimated_monthly_loss, 0)

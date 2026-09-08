@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { nanoid } from 'nanoid'
 
 const SHOPIFY_API_KEY = process.env.SHOPIFY_API_KEY || ''
-const SCOPES = 'read_orders,read_customers,read_products,write_script_tags,read_discounts,read_analytics'
+const SCOPES = 'read_orders,read_customers,read_products,read_discounts'
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 const REDIRECT_URI = `${APP_URL}/api/auth/shopify/callback`
 

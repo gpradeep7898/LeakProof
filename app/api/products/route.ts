@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export const dynamic = 'force-dynamic'
 import { query } from '@/lib/db';
-import { getDefaultStoreId } from '@/lib/store';
+import { getStoreFromRequest } from '@/lib/store';
 
 export async function GET(req: NextRequest) {
   try {
-    const storeId = await getDefaultStoreId();
+    const storeId = await getStoreFromRequest(null);
     const { searchParams } = new URL(req.url);
     const sort = searchParams.get('sort') || 'revenue';
 

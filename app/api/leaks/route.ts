@@ -2,18 +2,18 @@ import { NextResponse } from 'next/server'
 
 export const dynamic = 'force-dynamic'
 import { query } from '@/lib/db'
-import { getDefaultStoreId } from '@/lib/store'
+import { getStoreFromRequest } from '@/lib/store'
 import { LeakDetector } from '@/lib/services/leakDetector'
 
 export async function GET(request: Request) {
   try {
-    const storeId = await getDefaultStoreId()
+    const storeId = await getStoreFromRequest(null)
     const { searchParams } = new URL(request.url)
     const scan = searchParams.get('scan') === 'true'
 
     if (scan) {
-      const detector = new LeakDetector();
-      await detector.detectAllLeaks(storeId);
+      const detector = new LeakDetector(storeId);
+      await detector.detectAllLeaks();
     }
 
     const rows = await query<{

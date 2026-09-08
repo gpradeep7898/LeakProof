@@ -4,9 +4,9 @@ export function setupWorkers() {
   createWorker(QUEUES.DETECTION, async (job: { data: { storeId: string } }) => {
     const { storeId } = job.data;
     const { LeakDetector } = await import('./services/leakDetector');
-    const detector = new LeakDetector();
+    const detector = new LeakDetector(storeId);
     console.log(`[JOB] Starting leak detection for store ${storeId}`);
-    await detector.detectAllLeaks(storeId);
+    await detector.detectAllLeaks();
     console.log(`[JOB] Finished leak detection for store ${storeId}`);
   }, 5);
 

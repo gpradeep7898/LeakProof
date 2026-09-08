@@ -83,7 +83,8 @@ export class Autopilot {
             actionsGenerated++
 
             // Determine if we should auto-execute
-            const shouldExecute = this.shouldAutoExecute(leak.recommended_action.risk_level, settings)
+            const recAction = leak.recommended_action as Record<string, string> | undefined
+            const shouldExecute = this.shouldAutoExecute(recAction?.risk_level ?? 'high', settings)
 
             if (shouldExecute) {
                 try {

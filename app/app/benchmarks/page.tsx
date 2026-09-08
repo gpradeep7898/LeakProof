@@ -1,11 +1,19 @@
-'use client';
+'use client'
 
-import { BenchmarkDashboard } from '@/components/benchmarks/BenchmarkDashboard';
+import { Page, Layout } from '@shopify/polaris'
+import { BenchmarkDashboard } from '@/components/benchmarks/BenchmarkDashboard'
 
 export default function BenchmarksPage() {
-    return (
-        <div className="space-y-6">
-            <BenchmarkDashboard />
-        </div>
-    );
+  return (
+    <Page
+      title="Industry Benchmarks"
+      subtitle="See how your store compares to similar DTC merchants."
+    >
+      <Layout>
+        <Layout.Section>
+          <BenchmarkDashboard />
+        </Layout.Section>
+      </Layout>
+    </Page>
+  )
 }

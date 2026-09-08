@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { CSVIngestionService } from '@/lib/services/csvIngestion';
-import { getDefaultStoreId } from '@/lib/store';
+import { getStoreFromRequest } from '@/lib/store';
 
 export const maxDuration = 300; // 5 min for large CSV imports
 
@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
     }
 
-    const storeId = await getDefaultStoreId();
+    const storeId = await getStoreFromRequest(req);
     const ingestor = new CSVIngestionService();
     const aggregated: Record<string, number> = { orders: 0, order_items: 0, products: 0, customers: 0, discounts: 0 };
     const allErrors: string[] = [];

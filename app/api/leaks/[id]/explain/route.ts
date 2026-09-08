@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { queryOne } from '@/lib/db'
-import { getDefaultStoreId } from '@/lib/store'
+import { getStoreFromRequest } from '@/lib/store'
 
 export async function GET(
   request: NextRequest,
@@ -8,7 +8,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params
-    const storeId = await getDefaultStoreId()
+    const storeId = await getStoreFromRequest(null)
     const leak = await queryOne<{
       title: string
       description: string

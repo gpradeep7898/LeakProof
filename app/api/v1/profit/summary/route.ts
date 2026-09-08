@@ -4,11 +4,11 @@
  */
 import { NextRequest, NextResponse } from 'next/server'
 import { queryOne, query } from '@/lib/db'
-import { getDefaultStoreId } from '@/lib/store'
+import { getStoreFromRequest } from '@/lib/store'
 
 export async function GET(req: NextRequest) {
     try {
-        const storeId = await getDefaultStoreId()
+        const storeId = await getStoreFromRequest(req)
 
         // Current month profit
         const current = await queryOne<{
@@ -19,13 +19,13 @@ export async function GET(req: NextRequest) {
       SELECT
         COALESCE(SUM(total_price), 0)::text AS total_revenue,
         COALESCE(SUM(net_profit), 0)::text AS net_profit,
-        COALESCE(SUM(gross_profit), 0)::text AS gross_profit,
+        COALESCE(SUM(total_price - cogs), 0)::text AS gross_profit,
         COALESCE(SUM(cogs), 0)::text AS cogs,
         COALESCE(SUM(shipping_cost), 0)::text AS shipping,
         COALESCE(SUM(total_discounts), 0)::text AS discounts,
         COALESCE(SUM(platform_fees + payment_processing_fees), 0)::text AS fees,
         COUNT(*)::text AS order_count,
-        COALESCE(AVG(profit_margin_pct), 0)::text AS avg_margin
+        COALESCE(AVG(CASE WHEN total_price > 0 THEN net_profit / total_price * 100 ELSE 0 END), 0)::text AS avg_margin
       FROM orders
       WHERE store_id = $1
         AND order_date >= DATE_TRUNC('month', NOW())
@@ -33,12 +33,11 @@ export async function GET(req: NextRequest) {
 
         // Previous month profit
         const previous = await queryOne<{
-            net_profit: string; total_revenue: string; avg_margin: string
+            net_profit: string; total_revenue: string
         }>(`
       SELECT
         COALESCE(SUM(net_profit), 0)::text AS net_profit,
-        COALESCE(SUM(total_price), 0)::text AS total_revenue,
-        COALESCE(AVG(profit_margin_pct), 0)::text AS avg_margin
+        COALESCE(SUM(total_price), 0)::text AS total_revenue
       FROM orders
       WHERE store_id = $1
         AND order_date >= DATE_TRUNC('month', NOW()) - INTERVAL '1 month'
@@ -48,15 +47,14 @@ export async function GET(req: NextRequest) {
         // Customer metrics
         const customers = await queryOne<{
             total_customers: string; vip_count: string; at_risk_count: string; lapsed_count: string
-            avg_ltv: string; avg_ltv_cac: string; repeat_rate: string
+            avg_ltv: string; repeat_rate: string
         }>(`
       SELECT
         COUNT(*)::text AS total_customers,
-        COUNT(*) FILTER (WHERE segment = 'vip')::text AS vip_count,
-        COUNT(*) FILTER (WHERE segment = 'at_risk')::text AS at_risk_count,
-        COUNT(*) FILTER (WHERE segment = 'lapsed')::text AS lapsed_count,
+        COUNT(*) FILTER (WHERE segment = 'VIP' OR segment = 'vip')::text AS vip_count,
+        COUNT(*) FILTER (WHERE segment = 'At Risk' OR segment = 'at_risk')::text AS at_risk_count,
+        COUNT(*) FILTER (WHERE segment = 'Lapsed' OR segment = 'lapsed')::text AS lapsed_count,
         COALESCE(AVG(lifetime_value), 0)::text AS avg_ltv,
-        COALESCE(AVG(ltv_cac_ratio) FILTER (WHERE ltv_cac_ratio > 0), 0)::text AS avg_ltv_cac,
         COALESCE(
           COUNT(*) FILTER (WHERE total_orders >= 2) * 100.0 / NULLIF(COUNT(*), 0),
           0
@@ -135,7 +133,7 @@ export async function GET(req: NextRequest) {
                 atRisk: parseInt(customers?.at_risk_count || '0'),
                 lapsed: parseInt(customers?.lapsed_count || '0'),
                 avgLtv: parseFloat(customers?.avg_ltv || '0'),
-                ltvCacRatio: parseFloat(customers?.avg_ltv_cac || '0'),
+                ltvCacRatio: 0,
                 repeatRate: parseFloat(customers?.repeat_rate || '0'),
             },
             leaks: {

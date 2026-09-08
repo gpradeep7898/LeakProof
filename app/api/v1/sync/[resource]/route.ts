@@ -8,7 +8,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { ShopifyDataSync } from '@/lib/services/shopifySync'
 import { queryOne } from '@/lib/db'
-import { getDefaultStoreId } from '@/lib/store'
+import { getStoreFromRequest } from '@/lib/store'
 
 async function getStoreWithShopify(storeId: string) {
     return queryOne<{
@@ -23,7 +23,7 @@ async function getStoreWithShopify(storeId: string) {
 
 export async function POST(req: NextRequest, { params }: { params: { resource: string } }) {
     try {
-        const storeId = await getDefaultStoreId()
+        const storeId = await getStoreFromRequest(req)
         const store = await getStoreWithShopify(storeId)
 
         if (!store?.shopify_access_token) {

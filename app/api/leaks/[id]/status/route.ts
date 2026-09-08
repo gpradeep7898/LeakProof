@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { execute, queryOne } from '@/lib/db'
-import { getDefaultStoreId } from '@/lib/store'
+import { getStoreFromRequest } from '@/lib/store'
 
 /** Update leak status (updates linked action) */
 export async function PATCH(
@@ -16,7 +16,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Invalid status. Use: planned, executed, completed, ignored, todo' }, { status: 400 })
     }
 
-    const storeId = await getDefaultStoreId()
+    const storeId = await getStoreFromRequest(null)
     const mapping: Record<string, string> = { executed: 'completed' }
 
     const action = await queryOne<{ action_id: string }>(

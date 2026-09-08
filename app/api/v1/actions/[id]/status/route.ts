@@ -4,11 +4,11 @@
  */
 import { NextRequest, NextResponse } from 'next/server'
 import { execute, queryOne } from '@/lib/db'
-import { getDefaultStoreId } from '@/lib/store'
+import { getStoreFromRequest } from '@/lib/store'
 
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
     try {
-        const storeId = await getDefaultStoreId()
+        const storeId = await getStoreFromRequest(req)
         const { status } = await req.json()
         const actionId = params.id
 

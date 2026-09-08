@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 import { MetricEngine } from '@/lib/services/metricEngine';
-import { getDefaultStoreId } from '@/lib/store';
+import { getStoreFromRequest } from '@/lib/store';
 
 export async function POST(req: NextRequest) {
     try {
-        const storeId = await getDefaultStoreId();
+        const storeId = await getStoreFromRequest(null);
         const metrics = new MetricEngine();
 
         await metrics.recalculateAll(storeId);

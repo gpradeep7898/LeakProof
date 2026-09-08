@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server'
 import { query } from '@/lib/db'
-import { getDefaultStoreId } from '@/lib/store'
+import { getStoreFromRequest } from '@/lib/store'
 
 export async function GET() {
   try {
-    const storeId = await getDefaultStoreId()
+    const storeId = await getStoreFromRequest(null)
 
     const atRisk = await query<{
       customer_id: string

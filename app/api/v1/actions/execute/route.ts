@@ -5,11 +5,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { ActionExecutor } from '@/lib/services/actionExecutor'
 import { execute } from '@/lib/db'
-import { getDefaultStoreId } from '@/lib/store'
+import { getStoreFromRequest } from '@/lib/store'
 
 export async function POST(req: NextRequest) {
     try {
-        const storeId = await getDefaultStoreId()
+        const storeId = await getStoreFromRequest(req)
         const body = await req.json()
         const { actionId, action_id } = body
         const id = actionId || action_id

@@ -16,8 +16,8 @@ export class MetricEngine {
     await this.computeProductIntelligence(storeId);
     await this.computeDiscountIntelligence(storeId);
 
-    const detector = new LeakDetector();
-    await detector.detectAllLeaks(storeId);
+    const detector = new LeakDetector(storeId);
+    await detector.detectAllLeaks();
 
     // Generate actions from leaks
     await this.syncActionsFromLeaks(storeId);

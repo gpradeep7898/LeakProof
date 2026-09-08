@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Page, Layout, Button } from '@shopify/polaris'
 import {
   TrendingUp, TrendingDown, AlertTriangle, Users, RefreshCw,
   Zap, ChevronRight, DollarSign, Target, BarChart3,
@@ -63,16 +64,15 @@ function ProfitHero({ summary, loading }: { summary: ProfitSummary | null; loadi
       animate={{ opacity: 1, y: 0 }}
       className="bg-gradient-to-br from-gray-900 via-slate-800 to-gray-900 rounded-3xl p-8 border border-gray-700/50 relative overflow-hidden"
     >
-      {/* Background glow */}
       <div className="absolute top-0 right-0 w-80 h-80 bg-teal/5 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-60 h-60 bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative">
         <p className="text-gray-400 text-sm font-medium uppercase tracking-widest mb-2">True Profit This Month</p>
         <div className="flex items-end gap-4 mb-3">
-          <h1 className={`text-6xl font-black ${profit >= 0 ? 'text-white' : 'text-red-400'}`}>
+          <h2 className={`text-6xl font-black ${profit >= 0 ? 'text-white' : 'text-red-400'}`}>
             {profit < 0 ? '-' : ''}${Math.abs(Math.round(profit)).toLocaleString()}
-          </h1>
+          </h2>
           <div className={`flex items-center gap-1 mb-2 px-3 py-1 rounded-full text-sm font-semibold ${isUp ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'
             }`}>
             {isUp ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
@@ -80,7 +80,6 @@ function ProfitHero({ summary, loading }: { summary: ProfitSummary | null; loadi
           </div>
         </div>
 
-        {/* Founder Insight */}
         {summary?.founderInsight && (
           <div className="flex items-start gap-3 p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl">
             <Lightbulb className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
@@ -131,7 +130,6 @@ function MetricCard({ label, value, benchmark, unit = '', icon: Icon, positive, 
 
 function WaterfallChart({ data, loading }: { data: Array<{ label: string; value: number; type: string }> | undefined; loading: boolean }) {
   if (loading) return <div className="h-48 bg-gray-100 rounded-2xl animate-pulse" />
-
   if (!data || data.length === 0) return null
 
   const revenue = data.find((d) => d.label === 'Revenue')?.value || 0
@@ -152,12 +150,10 @@ function WaterfallChart({ data, loading }: { data: Array<{ label: string; value:
                 initial={{ width: 0 }}
                 animate={{ width: `${width}%` }}
                 transition={{ delay: i * 0.05, duration: 0.5 }}
-                className={`h-full rounded-lg ${isTotal ? 'bg-teal' : isNegative ? 'bg-red-400/70' : 'bg-emerald-400/80'
-                  }`}
+                className={`h-full rounded-lg ${isTotal ? 'bg-teal' : isNegative ? 'bg-red-400/70' : 'bg-emerald-400/80'}`}
               />
             </div>
-            <span className={`text-sm font-bold w-24 text-right flex-shrink-0 ${isTotal ? 'text-teal' : isNegative ? 'text-red-600' : 'text-emerald-600'
-              }`}>
+            <span className={`text-sm font-bold w-24 text-right flex-shrink-0 ${isTotal ? 'text-teal' : isNegative ? 'text-red-600' : 'text-emerald-600'}`}>
               {isNegative ? '-' : '+'}${Math.abs(Math.round(item.value)).toLocaleString()}
             </span>
           </div>
@@ -202,8 +198,7 @@ function LeakPreviewCard({ leak, onApprove }: { leak: Leak; onApprove: (id: stri
       layout
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`rounded-2xl border p-5 transition-all ${SEVERITY_STYLES[leak.severity] || SEVERITY_STYLES.medium
-        }`}
+      className={`rounded-2xl border p-5 transition-all ${SEVERITY_STYLES[leak.severity] || SEVERITY_STYLES.medium}`}
     >
       <div className="flex items-start justify-between gap-3 mb-3">
         <div>
@@ -229,7 +224,7 @@ function LeakPreviewCard({ leak, onApprove }: { leak: Leak; onApprove: (id: stri
 
       {approved ? (
         <div className="flex items-center gap-2 text-emerald-600 text-sm font-semibold">
-          <Shield className="w-4 h-4" /> Fix approved & executing
+          <Shield className="w-4 h-4" /> Fix approved &amp; executing
         </div>
       ) : (
         <button
@@ -240,7 +235,7 @@ function LeakPreviewCard({ leak, onApprove }: { leak: Leak; onApprove: (id: stri
           {approving ? (
             <><RefreshCw className="w-4 h-4 animate-spin" /> Executing…</>
           ) : (
-            <><Zap className="w-4 h-4" /> Approve & Fix Now</>
+            <><Zap className="w-4 h-4" /> Approve &amp; Fix Now</>
           )}
         </button>
       )}
@@ -271,9 +266,9 @@ export default function ProfitDashboard() {
         benchRes.json(),
       ])
 
-      setSummary(profitData)
-      setLeaks(leaksData.leaks || [])
-      setBenchmark(benchData)
+      if (profitRes.ok && !profitData.error) setSummary(profitData)
+      setLeaks(Array.isArray(leaksData?.leaks) ? leaksData.leaks : [])
+      if (benchRes.ok && !benchData.error) setBenchmark(benchData)
       setLastRefresh(new Date())
     } catch (err) {
       console.error('Dashboard load error:', err)
@@ -284,7 +279,7 @@ export default function ProfitDashboard() {
 
   useEffect(() => {
     loadData()
-    const interval = setInterval(loadData, 60000) // refresh every 60s
+    const interval = setInterval(loadData, 60000)
     return () => clearInterval(interval)
   }, [loadData])
 
@@ -302,161 +297,121 @@ export default function ProfitDashboard() {
   const bmMedian = benchmark?.metrics
 
   return (
-    <div className="space-y-8 max-w-7xl">
-      {/* Header */}
-      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-black text-gray-900">Profit Operating System</h1>
-          <p className="text-sm text-gray-500 mt-0.5" suppressHydrationWarning>
-            Last updated {lastRefresh.toLocaleTimeString()} · Auto-refreshes every 60s
-          </p>
-        </div>
-        <button
-          onClick={handleScan}
-          disabled={scanning}
-          className="flex items-center gap-2 px-4 py-2 bg-teal text-white rounded-xl font-semibold text-sm hover:bg-teal-600 disabled:opacity-60 transition-all shadow-lg shadow-teal/20"
-        >
-          {scanning ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />}
-          {scanning ? 'Scanning…' : 'Scan for Leaks'}
-        </button>
-      </motion.div>
+    <Page
+      title="Profit Operating System"
+      subtitle="Auto-refreshes every 60s"
+      primaryAction={{
+        content: scanning ? 'Scanning…' : 'Scan for Leaks',
+        onAction: handleScan,
+        loading: scanning,
+      }}
+    >
+      <Layout>
+        <Layout.Section>
+          <div className="space-y-8">
+            {/* Profit Hero */}
+            <ProfitHero summary={summary} loading={loading} />
 
-      {/* Profit Hero */}
-      <ProfitHero summary={summary} loading={loading} />
-
-      {/* Key Metrics vs Benchmarks */}
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-            <BarChart3 className="w-5 h-5 text-teal" /> Key Metrics vs. Category
-          </h2>
-          {bmMedian && (
-            <span className="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-              Benchmarked against {benchmark?.groupKey?.split('_')[0] || 'general'} DTC median
-            </span>
-          )}
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <MetricCard
-            label="Repeat Rate"
-            value={bm?.repeatCustomerRate ?? null}
-            benchmark={bmMedian?.repeatCustomerRate ?? null}
-            unit="%"
-            icon={RefreshCw}
-            positive={true}
-            loading={loading}
-          />
-          <MetricCard
-            label="Avg Order Value"
-            value={bm?.avgOrderValue ?? null}
-            benchmark={bmMedian?.avgOrderValue ?? null}
-            unit="$"
-            icon={DollarSign}
-            positive={true}
-            loading={loading}
-          />
-          <MetricCard
-            label="Gross Margin"
-            value={bm?.grossMarginPct ?? null}
-            benchmark={bmMedian?.grossMarginPct ?? null}
-            unit="%"
-            icon={TrendingUp}
-            positive={true}
-            loading={loading}
-          />
-          <MetricCard
-            label="LTV:CAC Ratio"
-            value={bm?.ltvCacRatio ?? null}
-            benchmark={bmMedian?.ltvCacRatio ?? null}
-            unit=":1"
-            icon={Target}
-            positive={true}
-            loading={loading}
-          />
-        </div>
-      </motion.div>
-
-      {/* Customer Segments Quick Stats */}
-      {!loading && summary !== null && (summary.customers.total || 0) > 0 && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { label: 'Total Customers', value: summary?.customers.total ?? 0, icon: Users, color: 'teal' },
-              { label: 'VIP Customers', value: summary?.customers.vip ?? 0, icon: Shield, color: 'purple' },
-              { label: 'At Risk', value: summary?.customers.atRisk ?? 0, icon: AlertTriangle, color: 'amber' },
-              { label: 'Lapsed', value: summary?.customers.lapsed ?? 0, icon: TrendingDown, color: 'red' },
-            ].map((stat) => (
-              <div key={stat.label} className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center bg-${stat.color === 'teal' ? 'teal' : stat.color}-500/10`}>
-                  <stat.icon className={`w-5 h-5 text-${stat.color === 'teal' ? 'teal' : stat.color}-500`} />
-                </div>
-                <div>
-                  <p className="text-2xl font-black text-gray-900">{stat.value.toLocaleString()}</p>
-                  <p className="text-xs text-gray-500">{stat.label}</p>
-                </div>
+            {/* Key Metrics vs Benchmarks */}
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                  <BarChart3 className="w-5 h-5 text-teal" /> Key Metrics vs. Category
+                </h2>
+                {bmMedian && (
+                  <span className="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                    Benchmarked against {benchmark?.groupKey?.split('_')[0] || 'general'} DTC median
+                  </span>
+                )}
               </div>
-            ))}
-          </div>
-        </motion.div>
-      )}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <MetricCard label="Repeat Rate" value={bm?.repeatCustomerRate ?? null} benchmark={bmMedian?.repeatCustomerRate ?? null} unit="%" icon={RefreshCw} positive loading={loading} />
+                <MetricCard label="Avg Order Value" value={bm?.avgOrderValue ?? null} benchmark={bmMedian?.avgOrderValue ?? null} unit="$" icon={DollarSign} positive loading={loading} />
+                <MetricCard label="Gross Margin" value={bm?.grossMarginPct ?? null} benchmark={bmMedian?.grossMarginPct ?? null} unit="%" icon={TrendingUp} positive loading={loading} />
+                <MetricCard label="LTV:CAC Ratio" value={bm?.ltvCacRatio ?? null} benchmark={bmMedian?.ltvCacRatio ?? null} unit=":1" icon={Target} positive loading={loading} />
+              </div>
+            </motion.div>
 
-      {/* Top Priority Leaks */}
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-            <AlertTriangle className="w-5 h-5 text-red-500" /> Top Priority Leaks
-            {summary && summary.leaks.totalMonthlyLoss > 0 && (
-              <span className="px-3 py-1 bg-red-50 text-red-600 text-sm font-bold rounded-full">
-                ${Math.round(summary.leaks.totalMonthlyLoss).toLocaleString()}/mo total
-              </span>
+            {/* Customer Segments Quick Stats */}
+            {!loading && summary !== null && (summary.customers.total || 0) > 0 && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {[
+                    { label: 'Total Customers', value: summary.customers.total ?? 0, icon: Users },
+                    { label: 'VIP Customers', value: summary.customers.vip ?? 0, icon: Shield },
+                    { label: 'At Risk', value: summary.customers.atRisk ?? 0, icon: AlertTriangle },
+                    { label: 'Lapsed', value: summary.customers.lapsed ?? 0, icon: TrendingDown },
+                  ].map((stat) => (
+                    <div key={stat.label} className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-gray-100">
+                        <stat.icon className="w-5 h-5 text-gray-500" />
+                      </div>
+                      <div>
+                        <p className="text-2xl font-black text-gray-900">{stat.value.toLocaleString()}</p>
+                        <p className="text-xs text-gray-500">{stat.label}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
             )}
-          </h2>
-          <Link href="/app/leaks" className="text-sm text-teal font-semibold hover:underline flex items-center gap-1">
-            View All Leaks <ChevronRight className="w-4 h-4" />
-          </Link>
-        </div>
 
-        {loading ? (
-          <div className="grid md:grid-cols-3 gap-4">
-            {[1, 2, 3].map((i) => <div key={i} className="h-56 bg-gray-100 rounded-2xl animate-pulse" />)}
-          </div>
-        ) : leaks.length === 0 ? (
-          <div className="bg-gradient-to-br from-teal/5 to-emerald-50 rounded-2xl p-12 border border-teal/20 text-center">
-            <Shield className="w-12 h-12 text-teal mx-auto mb-4" />
-            <h3 className="text-lg font-bold text-gray-900 mb-2">No Active Leaks Detected</h3>
-            <p className="text-gray-600 mb-4">Upload your Shopify data or connect your store to start scanning.</p>
-            <div className="flex gap-3 justify-center">
-              <button onClick={handleScan} className="px-4 py-2 bg-teal text-white rounded-xl text-sm font-semibold hover:bg-teal-600">
-                Run Scan
-              </button>
-              <Link href="/app/connect" className="px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-xl text-sm font-semibold hover:bg-gray-50">
-                Connect Data
-              </Link>
-            </div>
-          </div>
-        ) : (
-          <div className="grid md:grid-cols-3 gap-4">
-            {leaks.map((leak) => (
-              <LeakPreviewCard key={leak.id} leak={leak} onApprove={() => loadData()} />
-            ))}
-          </div>
-        )}
-      </motion.div>
+            {/* Top Priority Leaks */}
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                  <AlertTriangle className="w-5 h-5 text-red-500" /> Top Priority Leaks
+                  {summary && summary.leaks.totalMonthlyLoss > 0 && (
+                    <span className="px-3 py-1 bg-red-50 text-red-600 text-sm font-bold rounded-full">
+                      ${Math.round(summary.leaks.totalMonthlyLoss).toLocaleString()}/mo total
+                    </span>
+                  )}
+                </h2>
+                <Link href="/app/leaks" className="text-sm text-teal font-semibold hover:underline flex items-center gap-1">
+                  View All Leaks <ChevronRight className="w-4 h-4" />
+                </Link>
+              </div>
 
-      {/* Profit Waterfall */}
-      {!loading && summary?.waterfall && summary.waterfall.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm"
-        >
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2 mb-6">
-            <BarChart3 className="w-5 h-5 text-teal" /> Profit Breakdown — This Month
-          </h2>
-          <WaterfallChart data={summary.waterfall} loading={false} />
-        </motion.div>
-      )}
-    </div>
+              {loading ? (
+                <div className="grid md:grid-cols-3 gap-4">
+                  {[1, 2, 3].map((i) => <div key={i} className="h-56 bg-gray-100 rounded-2xl animate-pulse" />)}
+                </div>
+              ) : leaks.length === 0 ? (
+                <div className="bg-gradient-to-br from-teal/5 to-emerald-50 rounded-2xl p-12 border border-teal/20 text-center">
+                  <Shield className="w-12 h-12 text-teal mx-auto mb-4" />
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">No Active Leaks Detected</h3>
+                  <p className="text-gray-600 mb-4">Upload your Shopify data or connect your store to start scanning.</p>
+                  <div className="flex gap-3 justify-center">
+                    <button onClick={handleScan} className="px-4 py-2 bg-teal text-white rounded-xl text-sm font-semibold hover:bg-teal-600">
+                      Run Scan
+                    </button>
+                    <Link href="/app/connect" className="px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-xl text-sm font-semibold hover:bg-gray-50">
+                      Connect Data
+                    </Link>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid md:grid-cols-3 gap-4">
+                  {leaks.map((leak) => (
+                    <LeakPreviewCard key={leak.id} leak={leak} onApprove={() => loadData()} />
+                  ))}
+                </div>
+              )}
+            </motion.div>
+
+            {/* Profit Waterfall */}
+            {!loading && summary?.waterfall && summary.waterfall.length > 0 && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
+                className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
+                <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2 mb-6">
+                  <BarChart3 className="w-5 h-5 text-teal" /> Profit Breakdown — This Month
+                </h2>
+                <WaterfallChart data={summary.waterfall} loading={false} />
+              </motion.div>
+            )}
+          </div>
+        </Layout.Section>
+      </Layout>
+    </Page>
   )
 }

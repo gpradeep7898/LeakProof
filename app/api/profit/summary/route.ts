@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server'
 
 export const dynamic = 'force-dynamic'
-import { getDefaultStoreId } from '@/lib/store'
+import { getStoreFromRequest } from '@/lib/store'
 import { ProfitCalculator } from '@/lib/services/profitCalculator'
 import { queryOne } from '@/lib/db'
 
 export async function GET(request: Request) {
   try {
-    const storeId = await getDefaultStoreId()
+    const storeId = await getStoreFromRequest(null)
     const { searchParams } = new URL(request.url)
     const timeframe = parseInt(searchParams.get('timeframe') || '30', 10)
 

@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server'
 import { queryOne } from '@/lib/db'
-import { getDefaultStoreId } from '@/lib/store'
+import { getStoreFromRequest } from '@/lib/store'
 
 export async function GET() {
   try {
-    const storeId = await getDefaultStoreId()
+    const storeId = await getStoreFromRequest(null)
     const m = await queryOne<{ founder_summary: string }>(
       `SELECT founder_summary FROM computed_metrics WHERE store_id = $1`,
       [storeId]

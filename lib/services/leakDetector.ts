@@ -37,7 +37,14 @@ function confidenceFromData(
 }
 
 export class LeakDetector {
-  async detectAllLeaks(storeId: string): Promise<RevenueLeak[]> {
+  private storeId: string
+
+  constructor(storeId: string) {
+    this.storeId = storeId
+  }
+
+  async detectAllLeaks(): Promise<RevenueLeak[]> {
+    const storeId = this.storeId
     const results = await Promise.all([
       this.detectChurnLeaks(storeId),
       this.detectDiscountLeaks(storeId),

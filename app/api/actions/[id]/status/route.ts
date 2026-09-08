@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { execute, queryOne } from '@/lib/db'
-import { getDefaultStoreId } from '@/lib/store'
+import { getStoreFromRequest } from '@/lib/store'
 
 export async function POST(
   request: NextRequest,
@@ -14,7 +14,7 @@ export async function POST(
       return NextResponse.json({ error: 'Invalid status' }, { status: 400 })
     }
 
-    const storeId = await getDefaultStoreId()
+    const storeId = await getStoreFromRequest(null)
     const existing = await queryOne<{ action_id: string }>(
       'SELECT action_id FROM actions WHERE action_id = $1 AND store_id = $2',
       [id, storeId]

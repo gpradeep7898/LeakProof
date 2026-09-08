@@ -2,12 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export const dynamic = 'force-dynamic'
 import { query } from '@/lib/db'
-import { getDefaultStoreId } from '@/lib/store'
+import { getStoreFromRequest } from '@/lib/store'
 
 /** Export anonymized customer IDs only - no PII */
 export async function GET(request: NextRequest) {
   try {
-    const storeId = await getDefaultStoreId()
+    const storeId = await getStoreFromRequest(null)
     const { searchParams } = new URL(request.url)
     const segmentFilter = searchParams.get('segment') || 'all'
 
