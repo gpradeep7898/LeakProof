@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { query } from '@/lib/db'
-import { getStoreFromRequest } from '@/lib/store'
+import { getStoreFromRequest, unauthorizedResponse } from '@/lib/store'
 
 export async function GET(req: NextRequest) {
     try {
@@ -77,6 +77,8 @@ export async function GET(req: NextRequest) {
 
         return NextResponse.json({ actions: mapped, summary })
     } catch (err) {
+    const authRes = unauthorizedResponse(err)
+    if (authRes) return authRes
         console.error('[Actions API] Error:', err)
         return NextResponse.json({ error: 'Failed to load actions', actions: [] }, { status: 500 })
     }

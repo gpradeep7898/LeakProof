@@ -8,7 +8,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { ShopifyDataSync } from '@/lib/services/shopifySync'
 import { queryOne } from '@/lib/db'
-import { getStoreFromRequest } from '@/lib/store'
+import { getStoreFromRequest, unauthorizedResponse } from '@/lib/store'
 
 async function getStoreWithShopify(storeId: string) {
     return queryOne<{
@@ -54,6 +54,8 @@ export async function POST(req: NextRequest, { params }: { params: { resource: s
 
         return NextResponse.json({ success: true, result, synced_at: new Date().toISOString() })
     } catch (err) {
+    const authRes = unauthorizedResponse(err)
+    if (authRes) return authRes
         console.error('[Sync] Error:', err)
         return NextResponse.json({ error: String(err) }, { status: 500 })
     }

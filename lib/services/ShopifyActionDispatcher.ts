@@ -75,7 +75,7 @@ export class ShopifyActionDispatcher {
         console.log(`[FLOW] Triggering leakproof.risk.detected`, triggerPayload);
 
         // Simulate flow trigger
-        // await shopifyClient.post('/admin/api/2024-01/flow/trigger', ...);
+        // await shopifyClient.post('/admin/api/2026-07/flow/trigger', ...);
 
         return { executed: true, mode: 'FLOW_TRIGGER' };
     }

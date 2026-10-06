@@ -6,7 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { query, queryOne } from '@/lib/db'
 import { LeakDetector } from '@/lib/services/leakDetector'
-import { getStoreFromRequest } from '@/lib/store'
+import { getStoreFromRequest, unauthorizedResponse } from '@/lib/store'
 
 export async function GET(req: NextRequest) {
     try {
@@ -74,6 +74,8 @@ export async function GET(req: NextRequest) {
             scannedAt: new Date().toISOString(),
         })
     } catch (err) {
+    const authRes = unauthorizedResponse(err)
+    if (authRes) return authRes
         console.error('[Leaks API] Error:', err)
         return NextResponse.json({ error: 'Failed to load leaks', leaks: [], totalAtRisk: 0 }, { status: 500 })
     }
@@ -93,6 +95,8 @@ export async function POST(req: NextRequest) {
             scannedAt: new Date().toISOString(),
         })
     } catch (err) {
+    const authRes = unauthorizedResponse(err)
+    if (authRes) return authRes
         console.error('[Leaks Scan] Error:', err)
         return NextResponse.json({ error: 'Scan failed' }, { status: 500 })
     }

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { execute, queryOne } from '@/lib/db'
-import { getStoreFromRequest } from '@/lib/store'
+import { getStoreFromRequest, unauthorizedResponse } from '@/lib/store'
 
 export async function POST(
   request: NextRequest,
@@ -14,7 +14,7 @@ export async function POST(
       return NextResponse.json({ error: 'Invalid status' }, { status: 400 })
     }
 
-    const storeId = await getStoreFromRequest(null)
+    const storeId = await getStoreFromRequest(request)
     const existing = await queryOne<{ action_id: string }>(
       'SELECT action_id FROM actions WHERE action_id = $1 AND store_id = $2',
       [id, storeId]
@@ -30,6 +30,8 @@ export async function POST(
 
     return NextResponse.json({ success: true, status })
   } catch (err) {
+    const authRes = unauthorizedResponse(err)
+    if (authRes) return authRes
     console.error('Action status update error:', err)
     return NextResponse.json({ error: 'Failed to update status' }, { status: 500 })
   }

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { execute, queryOne } from '@/lib/db'
-import { getStoreFromRequest } from '@/lib/store'
+import { getStoreFromRequest, unauthorizedResponse } from '@/lib/store'
 
 /** Update leak status (updates linked action) */
 export async function PATCH(
@@ -16,7 +16,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Invalid status. Use: planned, executed, completed, ignored, todo' }, { status: 400 })
     }
 
-    const storeId = await getStoreFromRequest(null)
+    const storeId = await getStoreFromRequest(request)
     const mapping: Record<string, string> = { executed: 'completed' }
 
     const action = await queryOne<{ action_id: string }>(
@@ -39,6 +39,8 @@ export async function PATCH(
 
     return NextResponse.json({ success: true, status })
   } catch (err) {
+    const authRes = unauthorizedResponse(err)
+    if (authRes) return authRes
     console.error('Leak status update error:', err)
     return NextResponse.json({ error: 'Failed to update status' }, { status: 500 })
   }

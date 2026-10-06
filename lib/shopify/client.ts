@@ -101,7 +101,7 @@ export class ShopifyClient {
     constructor(config: ShopifyConfig) {
         this.shopDomain = config.shopDomain
         this.accessToken = config.accessToken
-        this.apiVersion = config.apiVersion || '2024-01'
+        this.apiVersion = config.apiVersion || '2026-07'
         this.baseUrl = `https://${this.shopDomain}/admin/api/${this.apiVersion}`
     }
 

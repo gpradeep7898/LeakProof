@@ -1,10 +1,10 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { queryOne } from '@/lib/db'
-import { getStoreFromRequest } from '@/lib/store'
+import { getStoreFromRequest, unauthorizedResponse } from '@/lib/store'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const storeId = await getStoreFromRequest(null)
+    const storeId = await getStoreFromRequest(request)
     const m = await queryOne<{
       repeat_rate: string
       avg_reorder_days: string
@@ -41,6 +41,8 @@ export async function GET() {
       founderSummary: m.founder_summary || 'Connect your data to see your revenue summary.',
     })
   } catch (err) {
+    const authRes = unauthorizedResponse(err)
+    if (authRes) return authRes
     console.error('Metrics summary error:', err)
     return NextResponse.json({ error: 'Failed to load metrics' }, { status: 500 })
   }

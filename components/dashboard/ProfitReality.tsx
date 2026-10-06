@@ -6,9 +6,6 @@ import { toast } from 'react-hot-toast';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import Link from 'next/link';
 
-// Simple fetcher
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
-
 function MetricCard({ label, value, benchmark, trend }: { label: string, value: string, benchmark?: number, trend?: number }) {
     const isPositive = trend && trend > 0;
     return (
@@ -31,13 +28,16 @@ function MetricCard({ label, value, benchmark, trend }: { label: string, value: 
 }
 
 import { LeakCard } from '@/components/leaks/LeakCard';
+import { useAuthenticatedFetch } from '@/hooks/useAuthenticatedFetch'
 
 export function ProfitReality() {
     const queryClient = useQueryClient();
+    const authedFetch = useAuthenticatedFetch();
+    const fetcher = (url: string) => authedFetch(url).then((res) => res.json());
     const { data: profit, isLoading: profitLoading } = useQuery({ queryKey: ['profit-summary'], queryFn: () => fetcher('/api/profit/summary') });
     const { data: leaks, isLoading: leaksLoading } = useQuery({ queryKey: ['leaks'], queryFn: () => fetcher('/api/leaks') });
     const recalc = useMutation({
-        mutationFn: () => fetch('/api/recalculate', { method: 'POST' }).then((r) => r.ok ? r.json() : Promise.reject(new Error('Recalc failed'))),
+        mutationFn: () => authedFetch('/api/recalculate', { method: 'POST' }).then((r) => r.ok ? r.json() : Promise.reject(new Error('Recalc failed'))),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['profit-summary'] });
             queryClient.invalidateQueries({ queryKey: ['leaks'] });

@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
+import { useAuthenticatedFetch } from '@/hooks/useAuthenticatedFetch'
 
 export function LeakCard({ leak, onApprove }: { leak: any; onApprove?: () => void }) {
+  const authedFetch = useAuthenticatedFetch()
   const [loading, setLoading] = useState(false);
   const [explain, setExplain] = useState<string | null>(null);
   const queryClient = useQueryClient();
@@ -12,7 +14,7 @@ export function LeakCard({ leak, onApprove }: { leak: any; onApprove?: () => voi
   const updateStatus = async (status: string) => {
     setLoading(true);
     try {
-      const r = await fetch(`/api/leaks/${leak.id}/status`, {
+      const r = await authedFetch(`/api/leaks/${leak.id}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status }),
@@ -32,7 +34,7 @@ export function LeakCard({ leak, onApprove }: { leak: any; onApprove?: () => voi
     setLoading(true);
     setExplain(null);
     try {
-      const r = await fetch(`/api/leaks/${leak.id}/explain`);
+      const r = await authedFetch(`/api/leaks/${leak.id}/explain`);
       const j = await r.json();
       if (!r.ok) throw new Error(j.error || 'Failed');
       setExplain(j.explain);

@@ -9,6 +9,7 @@ import {
   Zap, ChevronRight, DollarSign, Target, BarChart3,
   ArrowUpRight, ArrowDownRight, Shield, Lightbulb
 } from 'lucide-react'
+import { useAuthenticatedFetch } from '@/hooks/useAuthenticatedFetch'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 type ProfitSummary = {
@@ -171,13 +172,14 @@ const SEVERITY_STYLES = {
 }
 
 function LeakPreviewCard({ leak, onApprove }: { leak: Leak; onApprove: (id: string) => void }) {
+  const authedFetch = useAuthenticatedFetch()
   const [approving, setApproving] = useState(false)
   const [approved, setApproved] = useState(false)
 
   const handleApprove = async () => {
     setApproving(true)
     try {
-      const r = await fetch('/api/v1/actions/execute', {
+      const r = await authedFetch('/api/v1/actions/execute', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ actionId: leak.id }),
@@ -245,6 +247,7 @@ function LeakPreviewCard({ leak, onApprove }: { leak: Leak; onApprove: (id: stri
 
 // ─── Main Dashboard ───────────────────────────────────────────────────────────
 export default function ProfitDashboard() {
+  const authedFetch = useAuthenticatedFetch()
   const [summary, setSummary] = useState<ProfitSummary | null>(null)
   const [leaks, setLeaks] = useState<Leak[]>([])
   const [benchmark, setBenchmark] = useState<Benchmark | null>(null)
@@ -255,9 +258,9 @@ export default function ProfitDashboard() {
   const loadData = useCallback(async () => {
     try {
       const [profitRes, leaksRes, benchRes] = await Promise.all([
-        fetch('/api/v1/profit/summary'),
-        fetch('/api/v1/leaks?limit=3'),
-        fetch('/api/v1/benchmarks/me'),
+        authedFetch('/api/v1/profit/summary'),
+        authedFetch('/api/v1/leaks?limit=3'),
+        authedFetch('/api/v1/benchmarks/me'),
       ])
 
       const [profitData, leaksData, benchData] = await Promise.all([
@@ -275,7 +278,7 @@ export default function ProfitDashboard() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [authedFetch])
 
   useEffect(() => {
     loadData()
@@ -286,7 +289,7 @@ export default function ProfitDashboard() {
   const handleScan = async () => {
     setScanning(true)
     try {
-      await fetch('/api/v1/leaks', { method: 'POST' })
+      await authedFetch('/api/v1/leaks', { method: 'POST' })
       await loadData()
     } finally {
       setScanning(false)

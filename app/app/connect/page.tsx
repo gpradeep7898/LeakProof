@@ -13,10 +13,12 @@ import {
   detectSchema,
   validateRequiredColumns,
 } from '@/lib/csv-utils'
+import { useAuthenticatedFetch } from '@/hooks/useAuthenticatedFetch'
 
 type Step = 'method' | 'csv' | 'shopify' | 'verify'
 
 export default function DataConnect() {
+  const authedFetch = useAuthenticatedFetch()
   const router       = useRouter()
   const [step, setStep]           = useState<Step>('method')
   const [shopDomain, setShopDomain] = useState('')
@@ -85,7 +87,7 @@ export default function DataConnect() {
     try {
       const formData = new FormData()
       formData.append('file', file)
-      const res = await fetch('/api/csv/upload', { method: 'POST', body: formData })
+      const res = await authedFetch('/api/csv/upload', { method: 'POST', body: formData })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Upload failed')
       setResult(data)

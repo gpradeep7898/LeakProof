@@ -6,6 +6,7 @@ import {
   Page, Layout, Card, Text, BlockStack, InlineStack, Badge,
   Button, Spinner, EmptyState, DataTable,
 } from '@shopify/polaris'
+import { useAuthenticatedFetch } from '@/hooks/useAuthenticatedFetch'
 
 type Segment = {
   id: string
@@ -37,6 +38,7 @@ const SEGMENT_ICON: Record<string, string> = {
 }
 
 export default function CustomerSegments() {
+  const authedFetch = useAuthenticatedFetch()
   const [data, setData] = useState<{ segments: Segment[]; customers: Customer[]; filter: string } | null>(null)
   const [filter, setFilter] = useState('all')
   const [loading, setLoading] = useState(true)
@@ -44,12 +46,12 @@ export default function CustomerSegments() {
 
   useEffect(() => {
     setLoading(true)
-    fetch(`/api/segments?segment=${filter}`)
+    authedFetch(`/api/segments?segment=${filter}`)
       .then((r) => r.json())
       .then(setData)
       .catch(() => setData({ segments: [], customers: [], filter }))
       .finally(() => setLoading(false))
-  }, [filter])
+  }, [filter, authedFetch])
 
   const segments = data?.segments || []
   const customers = data?.customers || []
@@ -58,7 +60,7 @@ export default function CustomerSegments() {
     if (filter === 'all') return
     setExporting(true)
     try {
-      const r = await fetch(`/api/segments/export?segment=${encodeURIComponent(filter)}`)
+      const r = await authedFetch(`/api/segments/export?segment=${encodeURIComponent(filter)}`)
       const j = await r.json()
       if (!r.ok) throw new Error(j.error || 'Failed')
       const blob = new Blob([j.customerIds.join('\n')], { type: 'text/plain' })

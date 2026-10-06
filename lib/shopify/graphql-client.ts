@@ -1,10 +1,10 @@
 /**
  * Shopify GraphQL Admin API Client
  * Uses cost-based rate limiting (leaky bucket: 1000 pts, 50 pts/s refill).
- * API version: 2024-10
+ * API version: 2026-07
  */
 
-const API_VERSION = '2024-10'
+const API_VERSION = '2026-07'
 
 interface GraphQLResponse<T> {
   data: T

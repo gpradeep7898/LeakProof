@@ -1,10 +1,10 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { query } from '@/lib/db'
-import { getStoreFromRequest } from '@/lib/store'
+import { getStoreFromRequest, unauthorizedResponse } from '@/lib/store'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const storeId = await getStoreFromRequest(null)
+    const storeId = await getStoreFromRequest(request)
 
     const atRisk = await query<{
       customer_id: string
@@ -69,6 +69,8 @@ export async function GET() {
       })),
     })
   } catch (err) {
+    const authRes = unauthorizedResponse(err)
+    if (authRes) return authRes
     console.error('Churn error:', err)
     return NextResponse.json({ error: 'Failed to load churn data' }, { status: 500 })
   }
