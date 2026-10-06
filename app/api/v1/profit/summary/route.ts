@@ -5,10 +5,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { queryOne, query } from '@/lib/db'
 import { getStoreFromRequest, unauthorizedResponse } from '@/lib/store'
+import { billingGuard } from '@/lib/billing'
+
+export const dynamic = 'force-dynamic'
 
 export async function GET(req: NextRequest) {
     try {
         const storeId = await getStoreFromRequest(req)
+    const billingRes = await billingGuard(storeId)
+    if (billingRes) return billingRes
 
         // Current month profit
         const current = await queryOne<{

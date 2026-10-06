@@ -23,16 +23,15 @@ export async function POST(req: NextRequest) {
       orders_requested: number[]
     }
 
-    // Log the request — actual data retrieval should be handled per your data policy.
-    // LeakProof stores only anonymized customer IDs (SHA256 of email), not PII.
+    // Record metadata ONLY — never the raw payload (it contains customer PII).
+    // Data retrieval for the requester is handled async per the privacy policy.
     await execute(
-      `INSERT INTO gdpr_requests (shop_domain, request_type, customer_id, payload, received_at)
-       VALUES ($1, 'data_request', $2, $3, NOW())
+      `INSERT INTO gdpr_requests (shop_domain, request_type, customer_id, status)
+       VALUES ($1, 'data_request', $2, 'received')
        ON CONFLICT DO NOTHING`,
-      [payload.shop_domain, String(payload.customer.id), body]
-    ).catch(() => {
-      // Table may not exist in all envs — log and continue.
-      console.log('[GDPR] data_request received for', payload.shop_domain, payload.customer.id)
+      [payload.shop_domain, String(payload.customer.id)]
+    ).catch((e) => {
+      console.error('[GDPR] data_request log failed:', e)
     })
 
     return NextResponse.json({ status: 'received' })

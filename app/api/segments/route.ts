@@ -3,10 +3,13 @@ import { NextRequest, NextResponse } from 'next/server'
 export const dynamic = 'force-dynamic'
 import { query } from '@/lib/db'
 import { getStoreFromRequest, unauthorizedResponse } from '@/lib/store'
+import { billingGuard } from '@/lib/billing'
 
 export async function GET(request: NextRequest) {
   try {
     const storeId = await getStoreFromRequest(request)
+    const billingRes = await billingGuard(storeId)
+    if (billingRes) return billingRes
     const { searchParams } = new URL(request.url)
     const segmentFilter = searchParams.get('segment') || 'all'
 

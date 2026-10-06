@@ -2,12 +2,15 @@ import { NextResponse } from 'next/server'
 
 export const dynamic = 'force-dynamic'
 import { getStoreFromRequest, unauthorizedResponse } from '@/lib/store'
+import { billingGuard } from '@/lib/billing'
 import { ProfitCalculator } from '@/lib/services/profitCalculator'
 import { queryOne } from '@/lib/db'
 
 export async function GET(request: Request) {
   try {
     const storeId = await getStoreFromRequest(request)
+    const billingRes = await billingGuard(storeId)
+    if (billingRes) return billingRes
     const { searchParams } = new URL(request.url)
     const timeframe = parseInt(searchParams.get('timeframe') || '30', 10)
 

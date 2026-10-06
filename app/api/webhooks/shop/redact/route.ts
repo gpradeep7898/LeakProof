@@ -29,17 +29,30 @@ export async function POST(req: NextRequest) {
 
     if (store) {
       const storeId = store.store_id
-      // Delete in dependency order
-      await execute('DELETE FROM segment_members WHERE store_id = $1', [storeId])
-      await execute('DELETE FROM customer_segments WHERE store_id = $1', [storeId])
-      await execute('DELETE FROM churn_predictions WHERE store_id = $1', [storeId])
-      await execute('DELETE FROM revenue_leaks WHERE store_id = $1', [storeId])
-      await execute('DELETE FROM actions WHERE store_id = $1', [storeId])
-      await execute('DELETE FROM order_items WHERE store_id = $1', [storeId])
-      await execute('DELETE FROM orders WHERE store_id = $1', [storeId])
-      await execute('DELETE FROM products WHERE store_id = $1', [storeId])
-      await execute('DELETE FROM customers WHERE store_id = $1', [storeId])
-      await execute('DELETE FROM computed_metrics WHERE store_id = $1', [storeId])
+      // Delete in dependency order — every table that holds this shop's data.
+      const tables = [
+        'segment_members',
+        'customer_segments',
+        'churn_predictions',
+        'revenue_leaks',
+        'actions',
+        'action_snapshots',
+        'order_items',
+        'orders',
+        'products',
+        'product_intelligence',
+        'customers',
+        'computed_metrics',
+        'import_rows',
+        'import_jobs',
+        'gdpr_requests',
+        'app_subscriptions',
+      ]
+      for (const t of tables) {
+        const col = t === 'gdpr_requests' ? 'shop_domain' : 'store_id'
+        const val = t === 'gdpr_requests' ? shopDomain : storeId
+        await execute(`DELETE FROM ${t} WHERE ${col} = $1`, [val])
+      }
       await execute('DELETE FROM stores WHERE store_id = $1', [storeId])
     }
 

@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { execute, queryOne } from '@/lib/db'
 import { getStoreFromRequest, unauthorizedResponse } from '@/lib/store'
+import { billingGuard } from '@/lib/billing'
+
+export const dynamic = 'force-dynamic'
 
 /** Update leak status (updates linked action) */
 export async function PATCH(
@@ -17,6 +20,8 @@ export async function PATCH(
     }
 
     const storeId = await getStoreFromRequest(request)
+    const billingRes = await billingGuard(storeId)
+    if (billingRes) return billingRes
     const mapping: Record<string, string> = { executed: 'completed' }
 
     const action = await queryOne<{ action_id: string }>(

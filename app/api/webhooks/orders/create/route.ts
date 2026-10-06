@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyWebhookHmac } from '@/lib/auth/session-token'
+import { sha256Hex } from '@/lib/crypto'
 import { pool } from '@/lib/db'
 
 type ShopifyOrder = {
@@ -48,13 +49,13 @@ export async function POST(req: NextRequest) {
 
   try {
     const storeRes = await pool.query(
-      'SELECT id FROM stores WHERE shopify_domain = $1',
+      'SELECT store_id FROM stores WHERE shopify_domain = $1',
       [shopDomain]
     )
     if (storeRes.rowCount === 0) {
       return NextResponse.json({ received: true })
     }
-    const storeId = storeRes.rows[0].id
+    const storeId = storeRes.rows[0].store_id
 
     // Upsert the order (idempotent — webhook can fire multiple times)
     await pool.query(
@@ -71,7 +72,8 @@ export async function POST(req: NextRequest) {
         storeId,
         String(order.id),
         order.name,
-        order.customer?.email ? Buffer.from(order.customer.email.toLowerCase()).toString('base64') : null,
+        // One-way hash only — base64 is reversible encoding, not anonymization.
+        order.customer?.email ? sha256Hex(order.customer.email.toLowerCase().trim()) : null,
         order.created_at,
         order.financial_status,
         order.fulfillment_status,

@@ -5,6 +5,7 @@
 
 import { query, queryOne, execute } from '@/lib/db'
 import { createShopifyClient } from '@/lib/shopify/client'
+import { getStoreAccessToken } from '@/lib/shop-token'
 
 export interface ExecutionResult {
     success: boolean
@@ -33,7 +34,7 @@ interface ActionRow {
 interface StoreRow {
     store_id: string
     shopify_domain: string
-    shopify_access_token: string
+    shopify_access_token: string | null
     klaviyo_api_key: string
 }
 
@@ -54,9 +55,13 @@ export class ActionExecutor {
 
         // Load store credentials
         const store = await queryOne<StoreRow>(`
-      SELECT store_id, shopify_domain, shopify_access_token, klaviyo_api_key
+      SELECT store_id, shopify_domain, klaviyo_api_key
       FROM stores WHERE store_id = $1
     `, [action.store_id])
+        if (store) {
+          // Decrypt the Shopify token (transparent for legacy plaintext tokens)
+          store.shopify_access_token = await getStoreAccessToken(action.store_id)
+        }
 
         // Set baseline before execution
         await this.setBaseline(actionId, action)

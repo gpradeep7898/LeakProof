@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { queryOne } from '@/lib/db'
 import { getStoreFromRequest, unauthorizedResponse } from '@/lib/store'
+import { billingGuard } from '@/lib/billing'
+
+export const dynamic = 'force-dynamic'
 
 // DTC industry medians (static benchmarks — replace with DB-backed benchmarks later)
 const CATEGORY_MEDIANS = {
@@ -14,6 +17,8 @@ const CATEGORY_MEDIANS = {
 export async function GET(req: NextRequest) {
     try {
         const storeId = await getStoreFromRequest(req)
+    const billingRes = await billingGuard(storeId)
+    if (billingRes) return billingRes
 
         // Compute merchant metrics from real order + customer data
         const metrics = await queryOne<{

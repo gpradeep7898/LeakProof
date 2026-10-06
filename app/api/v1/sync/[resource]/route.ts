@@ -9,22 +9,32 @@ import { NextRequest, NextResponse } from 'next/server'
 import { ShopifyDataSync } from '@/lib/services/shopifySync'
 import { queryOne } from '@/lib/db'
 import { getStoreFromRequest, unauthorizedResponse } from '@/lib/store'
+import { rateLimit } from '@/lib/rate-limit'
+import { billingGuard } from '@/lib/billing'
+
+export const dynamic = 'force-dynamic'
 
 async function getStoreWithShopify(storeId: string) {
-    return queryOne<{
+    const row = await queryOne<{
         store_id: string
         shopify_domain: string
-        shopify_access_token: string
     }>(`
-    SELECT store_id, shopify_domain, shopify_access_token
+    SELECT store_id, shopify_domain
     FROM stores WHERE store_id = $1
   `, [storeId])
+    if (!row) return null
+    const { getStoreAccessToken } = await import('@/lib/shop-token')
+    return { ...row, shopify_access_token: await getStoreAccessToken(storeId) }
 }
 
 export async function POST(req: NextRequest, { params }: { params: { resource: string } }) {
     try {
         const storeId = await getStoreFromRequest(req)
         const store = await getStoreWithShopify(storeId)
+    const billingRes = await billingGuard(storeId)
+    if (billingRes) return billingRes
+    const rlRes = await rateLimit(storeId, { scope: 'shopify-sync', limit: 4, windowSec: 300 })
+    if (rlRes) return rlRes
 
         if (!store?.shopify_access_token) {
             return NextResponse.json({

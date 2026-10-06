@@ -16,10 +16,19 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    // Mark the store as uninstalled — soft-delete to preserve analytics history
+    // Mark the store as uninstalled. Shopify auto-cancels the app subscription
+    // on uninstall; we record it so billing state stays truthful.
+    // Full data deletion happens 48h later via shop/redact.
     await pool.query(
-      `UPDATE stores SET shopify_access_token = NULL, updated_at = NOW()
+      `UPDATE stores SET shopify_access_token = NULL, shopify_access_token_iv = NULL,
+              uninstalled_at = NOW(), billing_status = 'cancelled', updated_at = NOW()
        WHERE shopify_domain = $1`,
+      [shopDomain]
+    )
+    await pool.query(
+      `UPDATE app_subscriptions SET status = 'cancelled', updated_at = NOW()
+       WHERE store_id IN (SELECT store_id FROM stores WHERE shopify_domain = $1)
+         AND status = 'active'`,
       [shopDomain]
     )
   } catch (err) {
