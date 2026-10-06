@@ -2,12 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export const dynamic = 'force-dynamic'
 import { query } from '@/lib/db'
-import { getStoreFromRequest } from '@/lib/store'
+import { getStoreFromRequest, unauthorizedResponse } from '@/lib/store'
 
 /** Export anonymized customer IDs only - no PII */
 export async function GET(request: NextRequest) {
   try {
-    const storeId = await getStoreFromRequest(null)
+    const storeId = await getStoreFromRequest(request)
     const { searchParams } = new URL(request.url)
     const segmentFilter = searchParams.get('segment') || 'all'
 
@@ -31,6 +31,8 @@ export async function GET(request: NextRequest) {
     const customerIds = members.map((m) => `Customer #${m.customer_id}`)
     return NextResponse.json({ customerIds, count: customerIds.length })
   } catch (err) {
+    const authRes = unauthorizedResponse(err)
+    if (authRes) return authRes
     console.error('Segment export error:', err)
     return NextResponse.json({ error: 'Export failed' }, { status: 500 })
   }

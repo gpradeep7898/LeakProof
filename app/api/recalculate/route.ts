@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 import { MetricEngine } from '@/lib/services/metricEngine';
-import { getStoreFromRequest } from '@/lib/store';
+import { getStoreFromRequest, unauthorizedResponse } from '@/lib/store';
 
 export async function POST(req: NextRequest) {
     try {
-        const storeId = await getStoreFromRequest(null);
+        const storeId = await getStoreFromRequest(req);
         const metrics = new MetricEngine();
 
         await metrics.recalculateAll(storeId);
@@ -17,6 +17,8 @@ export async function POST(req: NextRequest) {
         });
 
     } catch (e: any) {
+    const authRes = unauthorizedResponse(e)
+    if (authRes) return authRes
         console.error('Recalculation error:', e);
         return NextResponse.json({ error: e.message || 'Recalculation failed' }, { status: 500 });
     }

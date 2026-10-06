@@ -21,8 +21,11 @@ export function useAuthenticatedFetch() {
   return useCallback(
     async (url: string, options: RequestInit = {}): Promise<Response> => {
       const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
         ...(options.headers as Record<string, string>),
+      }
+      // Don't set Content-Type for FormData — the browser sets the multipart boundary.
+      if (!(options.body instanceof FormData) && !headers['Content-Type']) {
+        headers['Content-Type'] = 'application/json'
       }
 
       if (app) {

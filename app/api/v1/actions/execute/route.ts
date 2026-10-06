@@ -5,7 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { ActionExecutor } from '@/lib/services/actionExecutor'
 import { execute } from '@/lib/db'
-import { getStoreFromRequest } from '@/lib/store'
+import { getStoreFromRequest, unauthorizedResponse } from '@/lib/store'
 
 export async function POST(req: NextRequest) {
     try {
@@ -34,6 +34,8 @@ export async function POST(req: NextRequest) {
             error: result.error,
         }, { status: result.success ? 200 : 500 })
     } catch (err) {
+    const authRes = unauthorizedResponse(err)
+    if (authRes) return authRes
         console.error('[Actions Execute] Error:', err)
         return NextResponse.json({ error: String(err) }, { status: 500 })
     }

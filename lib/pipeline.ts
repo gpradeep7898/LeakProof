@@ -1,11 +1,4 @@
 import { execute, query, queryOne } from './db'
-import { getDefaultStoreId } from './store'
-
-const STORE_ID_KEY = 'default_store'
-
-async function getStoreId(): Promise<string> {
-  return getDefaultStoreId()
-}
 
 /** Core metrics */
 export async function computeMetrics(storeId: string): Promise<void> {

@@ -6,6 +6,7 @@ import {
     AlertTriangle, ChevronDown, ChevronUp, Shield, RefreshCw, Zap,
     Clock, RotateCcw, CheckCircle2, XCircle, Info, TrendingDown
 } from 'lucide-react'
+import { useAuthenticatedFetch } from '@/hooks/useAuthenticatedFetch'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 export type Leak = {
@@ -82,6 +83,7 @@ const RISK = {
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function LeakCard({ leak, onApproved }: { leak: Leak; onApproved?: (id: string) => void }) {
+  const authedFetch = useAuthenticatedFetch()
     const [expanded, setExpanded] = useState(false)
     const [approveState, setApproveState] = useState<ApproveState>('idle')
     const [approveMessage, setApproveMessage] = useState('')
@@ -94,7 +96,7 @@ export default function LeakCard({ leak, onApproved }: { leak: Leak; onApproved?
     const handleApprove = async () => {
         setApproveState('loading')
         try {
-            const res = await fetch('/api/v1/actions/execute', {
+            const res = await authedFetch('/api/v1/actions/execute', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ actionId: leak.id }),

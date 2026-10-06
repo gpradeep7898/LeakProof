@@ -4,7 +4,7 @@
  */
 import { NextRequest, NextResponse } from 'next/server'
 import { queryOne, query } from '@/lib/db'
-import { getStoreFromRequest } from '@/lib/store'
+import { getStoreFromRequest, unauthorizedResponse } from '@/lib/store'
 
 export async function GET(req: NextRequest) {
     try {
@@ -144,6 +144,8 @@ export async function GET(req: NextRequest) {
             founderInsight,
         })
     } catch (err) {
+    const authRes = unauthorizedResponse(err)
+    if (authRes) return authRes
         console.error('[Profit Summary] Error:', err)
         return NextResponse.json({ error: 'Failed to load profit summary' }, { status: 500 })
     }

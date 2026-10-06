@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export const dynamic = 'force-dynamic'
 import { query } from '@/lib/db';
-import { getStoreFromRequest } from '@/lib/store';
+import { getStoreFromRequest, unauthorizedResponse } from '@/lib/store';
 
 export async function GET(req: NextRequest) {
   try {
-    const storeId = await getStoreFromRequest(null);
+    const storeId = await getStoreFromRequest(req);
     const { searchParams } = new URL(req.url);
     const sort = searchParams.get('sort') || 'revenue';
 
@@ -38,6 +38,8 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(products);
   } catch (e: unknown) {
+    const authRes = unauthorizedResponse(e)
+    if (authRes) return authRes
     const msg = e instanceof Error ? e.message : 'Unknown error';
     return NextResponse.json({ error: msg }, { status: 500 });
   }

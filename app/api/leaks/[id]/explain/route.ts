@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { queryOne } from '@/lib/db'
-import { getStoreFromRequest } from '@/lib/store'
+import { getStoreFromRequest, unauthorizedResponse } from '@/lib/store'
 
 export async function GET(
   request: NextRequest,
@@ -8,7 +8,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params
-    const storeId = await getStoreFromRequest(null)
+    const storeId = await getStoreFromRequest(request)
     const leak = await queryOne<{
       title: string
       description: string
@@ -38,6 +38,8 @@ export async function GET(
 
     return NextResponse.json({ explain })
   } catch (err) {
+    const authRes = unauthorizedResponse(err)
+    if (authRes) return authRes
     console.error('Explain error:', err)
     return NextResponse.json({ error: 'Failed to generate explanation' }, { status: 500 })
   }

@@ -1,7 +1,6 @@
 import { Pool } from 'pg'
 import { parse } from 'csv-parse/sync'
 import { nanoid } from 'nanoid'
-import { getDefaultStoreId } from './store'
 import { runFullPipeline } from './pipeline'
 
 /** Normalize column name */

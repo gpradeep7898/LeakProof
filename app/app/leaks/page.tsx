@@ -5,8 +5,10 @@ import { motion } from 'framer-motion'
 import { Page, Layout, Button } from '@shopify/polaris'
 import { RefreshCw, Filter, Search, AlertTriangle, Zap } from 'lucide-react'
 import LeakCard, { type Leak } from '@/app/components/leaks/LeakCard'
+import { useAuthenticatedFetch } from '@/hooks/useAuthenticatedFetch'
 
 export default function LeaksPage() {
+  const authedFetch = useAuthenticatedFetch()
   const [leaks, setLeaks] = useState<Leak[]>([])
   const [totalAtRisk, setTotalAtRisk] = useState(0)
   const [loading, setLoading] = useState(true)
@@ -16,7 +18,7 @@ export default function LeaksPage() {
 
   const loadLeaks = useCallback(async () => {
     try {
-      const res = await fetch('/api/v1/leaks?limit=50')
+      const res = await authedFetch('/api/v1/leaks?limit=50')
       const data = await res.json()
       setLeaks(data.leaks || [])
       setTotalAtRisk(data.totalAtRisk || 0)
@@ -25,7 +27,7 @@ export default function LeaksPage() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [authedFetch])
 
   useEffect(() => {
     loadLeaks()
@@ -34,7 +36,7 @@ export default function LeaksPage() {
   const handleScan = async () => {
     setScanning(true)
     try {
-      await fetch('/api/v1/leaks', { method: 'POST' })
+      await authedFetch('/api/v1/leaks', { method: 'POST' })
       await loadLeaks()
     } finally {
       setScanning(false)

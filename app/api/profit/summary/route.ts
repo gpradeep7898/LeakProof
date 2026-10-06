@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server'
 
 export const dynamic = 'force-dynamic'
-import { getStoreFromRequest } from '@/lib/store'
+import { getStoreFromRequest, unauthorizedResponse } from '@/lib/store'
 import { ProfitCalculator } from '@/lib/services/profitCalculator'
 import { queryOne } from '@/lib/db'
 
 export async function GET(request: Request) {
   try {
-    const storeId = await getStoreFromRequest(null)
+    const storeId = await getStoreFromRequest(request)
     const { searchParams } = new URL(request.url)
     const timeframe = parseInt(searchParams.get('timeframe') || '30', 10)
 
@@ -42,6 +42,8 @@ export async function GET(request: Request) {
       trend: 0,
     })
   } catch (err) {
+    const authRes = unauthorizedResponse(err)
+    if (authRes) return authRes
     console.error('Profit summary error:', err)
     return NextResponse.json({ error: 'Failed to load profit summary' }, { status: 500 })
   }

@@ -1,10 +1,10 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { query } from '@/lib/db'
-import { getStoreFromRequest } from '@/lib/store'
+import { getStoreFromRequest, unauthorizedResponse } from '@/lib/store'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const storeId = await getStoreFromRequest(null)
+    const storeId = await getStoreFromRequest(request)
     const rows = await query<{
       product_id: string
       product_name: string
@@ -43,6 +43,8 @@ export async function GET() {
 
     return NextResponse.json({ products, total: products.length })
   } catch (err) {
+    const authRes = unauthorizedResponse(err)
+    if (authRes) return authRes
     console.error('Product intelligence error:', err)
     return NextResponse.json({ error: 'Failed to load products' }, { status: 500 })
   }

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { CSVIngestionService } from '@/lib/services/csvIngestion';
-import { getStoreFromRequest } from '@/lib/store';
+import { getStoreFromRequest, unauthorizedResponse } from '@/lib/store';
 
 export const maxDuration = 300; // 5 min for large CSV imports
 
@@ -48,6 +48,8 @@ export async function POST(req: NextRequest) {
       warnings: allErrors.length ? allErrors : undefined,
     });
   } catch (e: unknown) {
+    const authRes = unauthorizedResponse(e)
+    if (authRes) return authRes
     const msg = e instanceof Error ? e.message : 'Internal Server Error';
     console.error('Upload error:', e);
     return NextResponse.json({ error: msg }, { status: 500 });

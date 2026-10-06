@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export const dynamic = 'force-dynamic'
 import { query } from '@/lib/db'
-import { getStoreFromRequest } from '@/lib/store'
+import { getStoreFromRequest, unauthorizedResponse } from '@/lib/store'
 
 export async function GET(request: NextRequest) {
   try {
-    const storeId = await getStoreFromRequest(null)
+    const storeId = await getStoreFromRequest(request)
     const { searchParams } = new URL(request.url)
     const segmentFilter = searchParams.get('segment') || 'all'
 
@@ -55,6 +55,8 @@ export async function GET(request: NextRequest) {
       filter: segmentFilter,
     })
   } catch (err) {
+    const authRes = unauthorizedResponse(err)
+    if (authRes) return authRes
     console.error('Segments error:', err)
     return NextResponse.json({ error: 'Failed to load segments' }, { status: 500 })
   }

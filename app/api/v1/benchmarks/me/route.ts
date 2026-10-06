@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { queryOne } from '@/lib/db'
-import { getStoreFromRequest } from '@/lib/store'
+import { getStoreFromRequest, unauthorizedResponse } from '@/lib/store'
 
 // DTC industry medians (static benchmarks — replace with DB-backed benchmarks later)
 const CATEGORY_MEDIANS = {
@@ -71,6 +71,8 @@ export async function GET(req: NextRequest) {
             hasData,
         })
     } catch (err) {
+    const authRes = unauthorizedResponse(err)
+    if (authRes) return authRes
         console.error('[Benchmarks] Error:', err)
         return NextResponse.json({ error: 'Failed to load benchmarks' }, { status: 500 })
     }

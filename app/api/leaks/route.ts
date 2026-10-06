@@ -2,12 +2,12 @@ import { NextResponse } from 'next/server'
 
 export const dynamic = 'force-dynamic'
 import { query } from '@/lib/db'
-import { getStoreFromRequest } from '@/lib/store'
+import { getStoreFromRequest, unauthorizedResponse } from '@/lib/store'
 import { LeakDetector } from '@/lib/services/leakDetector'
 
 export async function GET(request: Request) {
   try {
-    const storeId = await getStoreFromRequest(null)
+    const storeId = await getStoreFromRequest(request)
     const { searchParams } = new URL(request.url)
     const scan = searchParams.get('scan') === 'true'
 
@@ -53,6 +53,8 @@ export async function GET(request: Request) {
 
     return NextResponse.json(leaks)
   } catch (err) {
+    const authRes = unauthorizedResponse(err)
+    if (authRes) return authRes
     console.error('Leaks error:', err)
     return NextResponse.json({ error: 'Failed to load leaks' }, { status: 500 })
   }

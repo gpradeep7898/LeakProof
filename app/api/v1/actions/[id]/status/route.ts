@@ -4,7 +4,7 @@
  */
 import { NextRequest, NextResponse } from 'next/server'
 import { execute, queryOne } from '@/lib/db'
-import { getStoreFromRequest } from '@/lib/store'
+import { getStoreFromRequest, unauthorizedResponse } from '@/lib/store'
 
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
     try {
@@ -33,6 +33,8 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 
         return NextResponse.json({ success: true, status })
     } catch (err) {
+    const authRes = unauthorizedResponse(err)
+    if (authRes) return authRes
         return NextResponse.json({ error: String(err) }, { status: 500 })
     }
 }

@@ -9,6 +9,7 @@ import {
   ArrowUpDown, RotateCcw, ChevronDown, ChevronUp,
   Play, XCircle, Shield,
 } from 'lucide-react'
+import { useAuthenticatedFetch } from '@/hooks/useAuthenticatedFetch'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 type Action = {
@@ -52,6 +53,7 @@ const RISK_CONFIG = {
 
 // ─── Action Card ─────────────────────────────────────────────────────────────
 function ActionCard({ action, onUpdate }: { action: Action; onUpdate: () => void }) {
+  const authedFetch = useAuthenticatedFetch()
   const [loading, setLoading] = useState(false)
   const [expanded, setExpanded] = useState(false)
 
@@ -61,7 +63,7 @@ function ActionCard({ action, onUpdate }: { action: Action; onUpdate: () => void
   const handleApprove = async () => {
     setLoading(true)
     try {
-      const res = await fetch('/api/v1/actions/execute', {
+      const res = await authedFetch('/api/v1/actions/execute', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ actionId: action.id }),
@@ -83,7 +85,7 @@ function ActionCard({ action, onUpdate }: { action: Action; onUpdate: () => void
   const handleReject = async () => {
     setLoading(true)
     try {
-      await fetch(`/api/v1/actions/${action.id}/status`, {
+      await authedFetch(`/api/v1/actions/${action.id}/status`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'rejected' }),
@@ -98,7 +100,7 @@ function ActionCard({ action, onUpdate }: { action: Action; onUpdate: () => void
   const handleUndo = async () => {
     setLoading(true)
     try {
-      await fetch(`/api/v1/actions/${action.id}/status`, {
+      await authedFetch(`/api/v1/actions/${action.id}/status`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'pending' }),
@@ -282,6 +284,7 @@ function ActionCard({ action, onUpdate }: { action: Action; onUpdate: () => void
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function ActionsPage() {
+  const authedFetch = useAuthenticatedFetch()
   const [actions, setActions] = useState<Action[]>([])
   const [summary, setSummary] = useState<Record<string, number>>({})
   const [loading, setLoading] = useState(true)
@@ -292,7 +295,7 @@ export default function ActionsPage() {
 
   const loadActions = useCallback(async () => {
     try {
-      const res = await fetch('/api/v1/actions')
+      const res = await authedFetch('/api/v1/actions')
       const data = await res.json()
       setActions(data.actions || [])
       setSummary(data.summary || {})
@@ -301,7 +304,7 @@ export default function ActionsPage() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [authedFetch])
 
   useEffect(() => {
     loadActions()
@@ -322,7 +325,7 @@ export default function ActionsPage() {
     let successCount = 0
     for (const action of pendingLowRisk) {
       try {
-        const res = await fetch('/api/v1/actions/execute', {
+        const res = await authedFetch('/api/v1/actions/execute', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ actionId: action.id }),
@@ -435,7 +438,7 @@ export default function ActionsPage() {
                 <p className="text-gray-500 mb-4">Run a leak scan to automatically generate prioritized fixes.</p>
                 <button
                   onClick={async () => {
-                    await fetch('/api/v1/leaks', { method: 'POST' })
+                    await authedFetch('/api/v1/leaks', { method: 'POST' })
                     loadActions()
                   }}
                   className="px-5 py-2.5 bg-teal text-white rounded-xl font-semibold hover:bg-teal-600 transition-all"
