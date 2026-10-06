@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "db:migrate": "node scripts/migrate.js",
+    "db:migrate": "node scripts/migrate.js && node scripts/migrate_phase2.js",
     "db:migrate:full": "node scripts/migrate_leakproof_full.js",
     "db:seed": "node scripts/seed.js",
     "db:check": "node scripts/check-db.js",

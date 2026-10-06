@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { queryOne } from '@/lib/db'
 import { getStoreFromRequest, unauthorizedResponse } from '@/lib/store'
+import { billingGuard } from '@/lib/billing'
+
+export const dynamic = 'force-dynamic'
 
 export async function GET(request: NextRequest) {
   try {
     const storeId = await getStoreFromRequest(request)
+    const billingRes = await billingGuard(storeId)
+    if (billingRes) return billingRes
     const m = await queryOne<{ founder_summary: string }>(
       `SELECT founder_summary FROM computed_metrics WHERE store_id = $1`,
       [storeId]

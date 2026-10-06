@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { CSVIngestionService } from '@/lib/services/csvIngestion';
-import { getStoreFromRequest, unauthorizedResponse } from '@/lib/store';
+import { getStoreFromRequest, unauthorizedResponse } from '@/lib/store'
+import { rateLimit } from '@/lib/rate-limit'
+import { billingGuard } from '@/lib/billing';
+
+export const dynamic = 'force-dynamic'
 
 export const maxDuration = 300; // 5 min for large CSV imports
 
@@ -16,6 +20,10 @@ export async function POST(req: NextRequest) {
     }
 
     const storeId = await getStoreFromRequest(req);
+    const billingRes = await billingGuard(storeId)
+    if (billingRes) return billingRes
+    const rlRes = await rateLimit(storeId, { scope: 'csv-upload', limit: 5, windowSec: 300 })
+    if (rlRes) return rlRes
     const ingestor = new CSVIngestionService();
     const aggregated: Record<string, number> = { orders: 0, order_items: 0, products: 0, customers: 0, discounts: 0 };
     const allErrors: string[] = [];

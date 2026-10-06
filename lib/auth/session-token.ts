@@ -4,6 +4,7 @@
  * Spec: https://shopify.dev/docs/apps/build/authentication-authorization/session-tokens
  */
 import { jwtVerify } from 'jose'
+import { timingSafeEqual as nodeTimingSafeEqual } from 'node:crypto'
 import { queryOne } from '@/lib/db'
 
 interface SessionTokenPayload {
@@ -48,7 +49,7 @@ export async function getStoreIdFromToken(authHeader: string | null): Promise<st
   }
 }
 
-/** Verify HMAC for Shopify webhook requests */
+/** Verify HMAC for Shopify webhook requests (constant-time comparison) */
 export async function verifyWebhookHmac(body: string, hmacHeader: string | null): Promise<boolean> {
   const secret = process.env.SHOPIFY_API_SECRET
   if (!secret || !hmacHeader) return false
@@ -63,5 +64,10 @@ export async function verifyWebhookHmac(body: string, hmacHeader: string | null)
   )
   const sig = await crypto.subtle.sign('HMAC', key, encoder.encode(body))
   const hex = Buffer.from(sig).toString('base64')
-  return hex === hmacHeader
+
+  // Constant-time compare to avoid timing side-channels.
+  const a = Buffer.from(hex, 'utf8')
+  const b = Buffer.from(hmacHeader, 'utf8')
+  if (a.length !== b.length) return false
+  return nodeTimingSafeEqual(a, b)
 }

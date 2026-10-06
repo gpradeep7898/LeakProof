@@ -6,10 +6,18 @@ import { NextRequest, NextResponse } from 'next/server'
 import { ActionExecutor } from '@/lib/services/actionExecutor'
 import { execute } from '@/lib/db'
 import { getStoreFromRequest, unauthorizedResponse } from '@/lib/store'
+import { rateLimit } from '@/lib/rate-limit'
+import { billingGuard } from '@/lib/billing'
+
+export const dynamic = 'force-dynamic'
 
 export async function POST(req: NextRequest) {
     try {
         const storeId = await getStoreFromRequest(req)
+    const billingRes = await billingGuard(storeId)
+    if (billingRes) return billingRes
+    const rlRes = await rateLimit(storeId, { scope: 'action-execute', limit: 10, windowSec: 60 })
+    if (rlRes) return rlRes
         const body = await req.json()
         const { actionId, action_id } = body
         const id = actionId || action_id

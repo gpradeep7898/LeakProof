@@ -7,6 +7,7 @@ import { ShopifyClient } from '@/lib/shopify/client'
 import { createGraphQLClient } from '@/lib/shopify/graphql-client'
 import { query as dbQuery, execute, queryOne } from '@/lib/db'
 import { nanoid } from 'nanoid'
+import { encryptSecret } from '@/lib/crypto'
 
 const SHOPIFY_API_KEY = process.env.SHOPIFY_API_KEY || ''
 const SHOPIFY_API_SECRET = process.env.SHOPIFY_API_SECRET || ''
@@ -20,6 +21,7 @@ const WEBHOOKS_TO_REGISTER = [
   { topic: 'SHOP_REDACT',            path: '/api/webhooks/shop/redact' },
   { topic: 'APP_UNINSTALLED',        path: '/api/webhooks/app/uninstalled' },
   { topic: 'ORDERS_CREATE',          path: '/api/webhooks/orders/create' },
+  { topic: 'APP_SUBSCRIPTIONS_UPDATE', path: '/api/webhooks/app/subscriptions/update' },
 ]
 
 export async function GET(req: NextRequest) {
@@ -67,6 +69,9 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(`${APP_URL}/app/connect?error=oauth_failed`)
   }
 
+  // Encrypt the token at rest — never store plaintext.
+  const { ciphertext: encToken, iv: encIv } = encryptSecret(accessToken)
+
   // Upsert store record
   const existingStore = await queryOne<{ store_id: string }>(
     'SELECT store_id FROM stores WHERE shopify_domain = $1',
@@ -75,15 +80,17 @@ export async function GET(req: NextRequest) {
 
   if (existingStore) {
     await execute(
-      `UPDATE stores SET shopify_access_token=$1, shopify_scope=$2, onboarded_at=COALESCE(onboarded_at,NOW()), updated_at=NOW()
-       WHERE shopify_domain=$3`,
-      [accessToken, grantedScope, shop]
+      `UPDATE stores SET shopify_access_token=$1, shopify_access_token_iv=$2, shopify_scope=$3,
+              onboarded_at=COALESCE(onboarded_at,NOW()), uninstalled_at=NULL, updated_at=NOW()
+       WHERE shopify_domain=$4`,
+      [encToken, encIv, grantedScope, shop]
     )
   } else {
     await execute(
-      `INSERT INTO stores (store_id, name, shopify_domain, shopify_access_token, shopify_scope, plan, onboarded_at, created_at, updated_at)
-       VALUES (gen_random_uuid(), $1, $2, $3, $4, 'free', NOW(), NOW(), NOW())`,
-      [shop, shop, accessToken, grantedScope]
+      `INSERT INTO stores (store_id, name, shopify_domain, shopify_access_token, shopify_access_token_iv,
+                           shopify_scope, plan, onboarded_at, created_at, updated_at)
+       VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, 'free', NOW(), NOW(), NOW())`,
+      [shop, shop, encToken, encIv, grantedScope]
     )
   }
 
@@ -92,8 +99,8 @@ export async function GET(req: NextRequest) {
     console.error('[Webhooks] Registration failed:', err)
   )
 
-  // Clear OAuth cookies and redirect into the embedded app
-  const response = NextResponse.redirect(`${APP_URL}/app?shop=${shop}`)
+  // Clear OAuth cookies and send the merchant to pick a plan first
+  const response = NextResponse.redirect(`${APP_URL}/app/billing?shop=${shop}`)
   response.cookies.delete('shopify_oauth_state')
   response.cookies.delete('shopify_oauth_shop')
   return response

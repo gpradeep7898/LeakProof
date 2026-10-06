@@ -2,11 +2,14 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export const dynamic = 'force-dynamic'
 import { query } from '@/lib/db';
-import { getStoreFromRequest, unauthorizedResponse } from '@/lib/store';
+import { getStoreFromRequest, unauthorizedResponse } from '@/lib/store'
+import { billingGuard } from '@/lib/billing';
 
 export async function GET(req: NextRequest) {
   try {
     const storeId = await getStoreFromRequest(req);
+    const billingRes = await billingGuard(storeId)
+    if (billingRes) return billingRes
     const { searchParams } = new URL(req.url);
     const sort = searchParams.get('sort') || 'revenue';
 

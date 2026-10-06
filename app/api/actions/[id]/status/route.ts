@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { execute, queryOne } from '@/lib/db'
 import { getStoreFromRequest, unauthorizedResponse } from '@/lib/store'
+import { billingGuard } from '@/lib/billing'
+
+export const dynamic = 'force-dynamic'
 
 export async function POST(
   request: NextRequest,
@@ -15,6 +18,8 @@ export async function POST(
     }
 
     const storeId = await getStoreFromRequest(request)
+    const billingRes = await billingGuard(storeId)
+    if (billingRes) return billingRes
     const existing = await queryOne<{ action_id: string }>(
       'SELECT action_id FROM actions WHERE action_id = $1 AND store_id = $2',
       [id, storeId]

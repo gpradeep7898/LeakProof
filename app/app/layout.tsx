@@ -21,6 +21,7 @@ const NAV_ITEMS = [
   { label: 'Product Catalog',   href: '/app/products',   icon: InventoryIcon },
   { label: 'Data Connect',      href: '/app/connect',    icon: ConnectIcon },
   { label: 'Benchmarks',        href: '/app/benchmarks', icon: ChartLineIcon },
+  { label: 'Billing',           href: '/app/billing',    icon: PersonIcon },
 ]
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {

@@ -9,6 +9,7 @@ import {
   Zap, ChevronRight, DollarSign, Target, BarChart3,
   ArrowUpRight, ArrowDownRight, Shield, Lightbulb
 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { useAuthenticatedFetch } from '@/hooks/useAuthenticatedFetch'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -248,6 +249,7 @@ function LeakPreviewCard({ leak, onApprove }: { leak: Leak; onApprove: (id: stri
 // ─── Main Dashboard ───────────────────────────────────────────────────────────
 export default function ProfitDashboard() {
   const authedFetch = useAuthenticatedFetch()
+  const router = useRouter()
   const [summary, setSummary] = useState<ProfitSummary | null>(null)
   const [leaks, setLeaks] = useState<Leak[]>([])
   const [benchmark, setBenchmark] = useState<Benchmark | null>(null)
@@ -257,6 +259,13 @@ export default function ProfitDashboard() {
 
   const loadData = useCallback(async () => {
     try {
+      // Merchants without an active subscription (or trial) pick a plan first.
+      const billing = await authedFetch('/api/billing/status').then((r) => r.json()).catch(() => null)
+      if (billing && billing.active === false) {
+        router.push('/app/billing')
+        return
+      }
+
       const [profitRes, leaksRes, benchRes] = await Promise.all([
         authedFetch('/api/v1/profit/summary'),
         authedFetch('/api/v1/leaks?limit=3'),
@@ -278,7 +287,7 @@ export default function ProfitDashboard() {
     } finally {
       setLoading(false)
     }
-  }, [authedFetch])
+  }, [authedFetch, router])
 
   useEffect(() => {
     loadData()
